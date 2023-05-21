@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxf.migration.mapper.BFSMapper">
+
+    <resultMap id="selectDbaObjectsMap" type="DbaObjects">
+        <result column="owner" property="owner"/>
+        <result column="object_name" property="objectName"/>
+        <result column="object_type" property="objectType"/>
+    </resultMap>
+
+    <resultMap id="selecteAllDependenciesMap" type="DbaObjects">
+        <result column="referenced_owner" property="owner"/>
+        <result column="referenced_name" property="objectName"/>
+        <result column="referenced_type" property="objectType"/>
+    </resultMap>
+
+
+    <resultMap id="selectPackageMap" type="package">
+        <result column="owner" property="owner"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="line" property="line"/>
+        <result column="text" property="text"/>
+    </resultMap>
+
+    <select id="selectDbaObjects" resultMap="selectDbaObjectsMap">
+        select d.owner,
+               d.object_name,
+               d.object_type
+        from dba_objects d
+        where object_id = #{objectID}
+    </select>
+
+    <select id="selecteDirectDependencies" resultMap="selecteAllDependenciesMap">
+
+
+        select d.referenced_name,
+               d.referenced_owner,
+               case d.referenced_type when 'PACKAGE BODY' then 'PACKAGE' else referenced_type end referenced_type
+        from dba_dependencies d
+        where d.name = #{objectName}
+          and d.owner = #{owner}
+          and d.type = (case #{objectType} when 'PACKAGE' then 'PACKAGE BODY' else #{objectType} end)
+          and d.referenced_owner not in ('SYS', 'PUBLIC')
+          and not (d.referenced_name = d.name
+            and d.owner = d.referenced_owner
+            and d.type = (case d.referenced_type when 'PACKAGE' then 'PACKAGE BODY' else referenced_type end)
+            )
+          and d.referenced_link_name is null
+    </select>
+
+    <select id="selectIndexes" resultType="DbaObjects">
+
+        select d.owner "owner", d.index_name "objectName", 'INDEX' "objectType"
+        from dba_indexes d
+        where 1 = 1
+          AND D.TABLE_NAME = #{objectName}
+          AND D.TABLE_OWNER = #{owner}
+          AND D.TABLE_TYPE = #{objectType}
+
+
+    </select>
+
+
+    <select id="selectPackage" resultMap="selectPackageMap">
+        SELECT d.owner, d.name, d.type, d.line, d.text
+        FROM dba_source D
+        WHERE D.NAME = #{objectName}
+          AND D.OWNER = #{owner}
+          AND D.TYPE = 'PACKAGE'
+        ORDER BY LINE
+    </select>
+    <select id="selectPackageBody" resultMap="selectPackageMap">
+        SELECT d.owner, d.name, d.type, d.line, d.text
+        FROM dba_source D
+        WHERE D.NAME = #{objectName}
+          AND D.OWNER = #{owner}
+          AND D.TYPE = 'PACKAGE BODY'
+        ORDER BY LINE
+    </select>
+    <select id="selectSynonym" resultType="DbaObjects">
+        select d.owner        "owner",
+               d.synonym_name "objectName",
+               'SYNONYM'      "objectType"
+        from dba_synonyms d
+        where 1 = 1
+          AND D.TABLE_OWNER = #{owner}
+          AND D.TABLE_name = #{objectName}
+
+
+    </select>
+    <select id="selectDBlink" resultType="com.lxf.migration.pojo.DbaObjects">
+
+        select do.owner "owner", do.object_type "objectType", do.object_name "objectName"
+        from dba_dependencies d,
+             dba_objects do
+        where d.name = #{objectName}
+          and d.owner = #{owner}
+          and do.object_type = 'DATABASE LINK'
+          and d.referenced_link_name is not null
+          and do.object_name = d.referenced_link_name
+        group by do.owner, do.object_type, do.object_name
+
+    </select>
+    <select id="selectTrigger" resultType="com.lxf.migration.pojo.DbaObjects">
+
+        select D.OWNER "owner", D.TRIGGER_NAME "objectName", 'TRIGGER' "objectType"
+        from dba_triggers d
+        where d.table_name = #{objectName}
+          AND D.TABLE_OWNER = #{owner}
+          AND D.BASE_OBJECT_TYPE = 'TABLE'
+
+
+    </select>
+
+    <select id="callSetIdentifier" statementType="CALLABLE">
+        {call DBMS_SESSION.set_identifier(#{clientID, jdbcType=VARCHAR, mode=IN})}
+    </select>
+    <select id="callGetDDL" statementType="CALLABLE" resultType="java.util.Map">
+        { #{sourceCode, mode=OUT, jdbcType=CLOB} = call DBMS_METADATA.GET_DDL(#{objectType, jdbcType=VARCHAR,mode=IN},
+                                                                              #{objectName, jdbcType=VARCHAR,mode=IN},
+                                                                              #{owner, jdbcType=VARCHAR,mode=IN}
+            )
+            }
+    </select>
+    <select id="callGetHashCode" statementType="CALLABLE" resultType="java.util.Map">
+        { #{sourceCodeHash, mode=OUT, jdbcType=VARCHAR} = call DBMS_CRYPTO.HASH(
+                DBMS_METADATA.GET_DDL(#{objectType, jdbcType=VARCHAR,mode=IN},
+                                      #{objectName, jdbcType=VARCHAR,mode=IN},
+                                      #{owner, jdbcType=VARCHAR,mode=IN}
+                    ), 2)
+            }
+    </select>
+    <select id="selectDataBase" resultType="java.lang.String">
+      select name from v$database
+    </select>
+</mapper>
