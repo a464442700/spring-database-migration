@@ -1,0 +1,32 @@
+#spring:
+#  datasource:
+#    dynamic:
+#      primary: local
+#      strict: false
+#      datasource:
+#        local:
+#          url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
+#          username: appsquery
+#          password: appsquery
+#          driver-class-name: oracle.jdbc.driver.OracleDriver
+#        remote:
+#          url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
+#          username: appsquery
+#          password: appsquery
+#          driver-class-name: oracle.jdbc.driver.OracleDriver
+spring:
+  datasource:
+    druid:
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+      url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
+      username: appsquery
+      password: appsquery
+
+
+mybatis:
+  #mapper-locations: classpath:/com.lxf.migration.mapper/*.xml
+  mapper-locations: classpath*:/com.lxf.migration.mapper/*.xml
+  type-aliases-package: com.lxf.migration.pojo
+server:
+  port: 8080
+

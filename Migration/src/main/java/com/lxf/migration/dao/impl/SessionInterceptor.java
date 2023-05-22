@@ -1,4 +1,4 @@
-package com.lxf.migration.dao;
+package com.lxf.migration.dao.impl;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.plugin.*;

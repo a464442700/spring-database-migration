@@ -1,10 +1,13 @@
-package com.lxf.migration.dao;
+package com.lxf.migration.dao.impl;
 
 
+import com.lxf.migration.dao.SourceCodeDao;
 import com.lxf.migration.mapper.BFSMapper;
 import com.lxf.migration.pojo.Node;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +18,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class SourceCodeDaoImpl implements SourceCodeDao {
 
 
@@ -64,6 +68,8 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
 //
 //    }
 
+    @Autowired
+    private BFSMapper mapper;
 
     public static String convertClobToString(Clob clob) throws SQLException, IOException {
         if (clob == null) {
@@ -84,7 +90,7 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
         String replacement = "/\r\n";
         return s.replaceAll(regex, replacement);
     }
-   @Override
+
     public void getSourcode(Node node) {
 
         String resource = "mybatis-config.xml";
@@ -92,37 +98,36 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
         Map dbaobjMap = new HashMap();
         dbaobjMap.put("owner", node.owner);
 
-        if (node.objectType.equals("DATABASE LINK")){
+        if (node.objectType.equals("DATABASE LINK")) {
 
             dbaobjMap.put("objectType", "DB_LINK");
-        }else{
+        } else {
             dbaobjMap.put("objectType", node.objectType);
-       }
+        }
 
         dbaobjMap.put("objectName", node.objectName);
-        try {
-            InputStream inputStream = Resources.getResourceAsStream(resource);
-            SqlSessionFactory sqlSessionFactory = (new SqlSessionFactoryBuilder()).build(inputStream);
-            SqlSession sqlSession = sqlSessionFactory.openSession();
-            BFSMapper mapper = (BFSMapper) sqlSession.getMapper(BFSMapper.class);
-            mapper.callGetDDL(dbaobjMap);
-            //System.out.println(dbaobjMap.get("sourceCode").getClass());
-            Clob sourceClob = (Clob) dbaobjMap.get("sourceCode");
-            try {
-                String sourCode = convertClobToString(sourceClob);
-                if (node.objectType.equals("PACKAGE")) {
-                    sourCode = dealPackageCode(sourCode);
 
-                }
-                node.setSourceCode(sourCode);
-            } catch (Exception e) {
+//            InputStream inputStream = Resources.getResourceAsStream(resource);
+//            SqlSessionFactory sqlSessionFactory = (new SqlSessionFactoryBuilder()).build(inputStream);
+//            SqlSession sqlSession = sqlSessionFactory.openSession();
+//            BFSMapper mapper = (BFSMapper) sqlSession.getMapper(BFSMapper.class);
+        mapper.callGetDDL(dbaobjMap);
+        //System.out.println(dbaobjMap.get("sourceCode").getClass());
+        Clob sourceClob = (Clob) dbaobjMap.get("sourceCode");
+        try {
+            String sourCode = convertClobToString(sourceClob);
+            if (node.objectType.equals("PACKAGE")) {
+                sourCode = dealPackageCode(sourCode);
 
             }
-        } catch (IOException v) {
-            v.printStackTrace();
+            node.setSourceCode(sourCode);
+        } catch (Exception e) {
+
         }
+
     }
-    public void getSourcodeHash(Node node){
+
+    public void getSourcodeHash(Node node) {
 
         String resource = "mybatis-config.xml";
 
@@ -131,26 +136,22 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
         if (node.objectType.equals("DATABASE LINK")) {
 
             dbaobjMap.put("objectType", "DB_LINK");
-        }
-        else{
+        } else {
             dbaobjMap.put("objectType", node.objectType);
         }
 
 
         dbaobjMap.put("objectName", node.objectName);
-        try {
-            InputStream inputStream = Resources.getResourceAsStream(resource);
-            SqlSessionFactory sqlSessionFactory = (new SqlSessionFactoryBuilder()).build(inputStream);
-            SqlSession sqlSession = sqlSessionFactory.openSession();
-            BFSMapper mapper = (BFSMapper) sqlSession.getMapper(BFSMapper.class);
-            mapper.callGetHashCode(dbaobjMap);
-            String sourceCodeHash = (String) dbaobjMap.get("sourceCodeHash");
-            node.setSourceCodeHash(sourceCodeHash);
 
-            //System.out.println("sourceCodeHash"+sourceCodeHash);
-        } catch (IOException v) {
-            v.printStackTrace();
-        }
+        // InputStream inputStream = Resources.getResourceAsStream(resource);
+        // SqlSessionFactory sqlSessionFactory = (new SqlSessionFactoryBuilder()).build(inputStream);
+        // SqlSession sqlSession = sqlSessionFactory.openSession();
+        // BFSMapper mapper = (BFSMapper) sqlSession.getMapper(BFSMapper.class);
+        mapper.callGetHashCode(dbaobjMap);
+        String sourceCodeHash = (String) dbaobjMap.get("sourceCodeHash");
+        node.setSourceCodeHash(sourceCodeHash);
+
+        //System.out.println("sourceCodeHash"+sourceCodeHash);
 
 
     }

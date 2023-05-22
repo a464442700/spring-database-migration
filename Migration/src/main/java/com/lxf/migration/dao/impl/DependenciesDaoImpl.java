@@ -1,6 +1,7 @@
-package com.lxf.migration.dao;
+package com.lxf.migration.dao.impl;
 
 
+import com.lxf.migration.dao.DependenciesDao;
 import com.lxf.migration.mapper.BFSMapper;
 import com.lxf.migration.pojo.DbaObjects;
 import com.lxf.migration.pojo.Node;
@@ -43,6 +44,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
     private ArrayList<Node> getAllNeighborNode(Map dbaobjMap, Node parantNode) {
 
         List<DbaObjects> allDirectNeighbors = mapper.selecteDirectDependencies(dbaobjMap);
+        System.out.println("getAllNeighborNode执行成功");
         return getNodes(allDirectNeighbors, parantNode, "Direct");
 
     }

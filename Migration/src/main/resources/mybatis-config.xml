@@ -6,9 +6,7 @@
     <typeAliases>
         <package name="com.lxf.migration.pojo"/>
     </typeAliases>
-<!--    <plugins>-->
-<!--        <plugin interceptor="com.lxf.dao.SessionInterceptor"/>-->
-<!--    </plugins>-->
+
     <environments default="development">
 
         <environment id="development">

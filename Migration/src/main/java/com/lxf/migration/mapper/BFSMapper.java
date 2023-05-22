@@ -4,11 +4,11 @@ package com.lxf.migration.mapper;
 
 import com.lxf.migration.pojo.DbaObjects;
 import com.lxf.migration.pojo.Node;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Map;
-@Repository
+@Mapper
 public interface BFSMapper {
     DbaObjects selectDbaObjects(Map map);
     List<DbaObjects> selecteDirectDependencies(Map map);

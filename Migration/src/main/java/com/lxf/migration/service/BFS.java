@@ -3,15 +3,15 @@ package com.lxf.migration.service;
 
 
 import com.lxf.migration.algorithm.AdjacencyListGraph;
-import com.lxf.migration.dao.DependenciesDaoImpl;
-import com.lxf.migration.dao.SourceCodeDaoImpl;
+import com.lxf.migration.dao.impl.DependenciesDaoImpl;
+import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.pojo.Node;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
-
+@Service
 public class BFS {
-    public BFS() {
-    }
+
 
     public AdjacencyListGraph<Node> getGraph() {
         return graph;
@@ -23,6 +23,18 @@ public class BFS {
         this.set = new HashSet<Node>();
         this.graph=new AdjacencyListGraph<Node>();
         this.init();
+    }
+    public BFS(){
+
+        this.queue = new LinkedList<Node>();
+        this.set = new HashSet<Node>();
+        this.graph=new AdjacencyListGraph<Node>();
+        this.init();
+
+    }
+
+    public void setStartNode(Node startNode) {
+        this.startNode = startNode;
     }
 
     private AdjacencyListGraph<Node> graph;
