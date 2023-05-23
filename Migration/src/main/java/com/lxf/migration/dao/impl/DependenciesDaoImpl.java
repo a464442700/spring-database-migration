@@ -10,6 +10,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.Map;
 @Service
 public class DependenciesDaoImpl implements DependenciesDao {
     @Autowired
+    @Qualifier("mapper")
     private BFSMapper mapper;
     private ArrayList<Node> getNodes(List<DbaObjects> allNeighbors, Node parentNode, String dependence_type) {
         ArrayList<Node> nodes = new ArrayList<Node>();

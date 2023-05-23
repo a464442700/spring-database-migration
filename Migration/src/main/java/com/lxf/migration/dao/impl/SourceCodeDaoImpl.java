@@ -7,6 +7,7 @@ import com.lxf.migration.pojo.Node;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -69,6 +70,7 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
 //    }
 
     @Autowired
+    @Qualifier("mapper")
     private BFSMapper mapper;
 
     public static String convertClobToString(Clob clob) throws SQLException, IOException {
@@ -111,6 +113,7 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
 //            SqlSessionFactory sqlSessionFactory = (new SqlSessionFactoryBuilder()).build(inputStream);
 //            SqlSession sqlSession = sqlSessionFactory.openSession();
 //            BFSMapper mapper = (BFSMapper) sqlSession.getMapper(BFSMapper.class);
+
         mapper.callGetDDL(dbaobjMap);
         //System.out.println(dbaobjMap.get("sourceCode").getClass());
         Clob sourceClob = (Clob) dbaobjMap.get("sourceCode");

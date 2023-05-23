@@ -14,19 +14,24 @@
 #          username: appsquery
 #          password: appsquery
 #          driver-class-name: oracle.jdbc.driver.OracleDriver
-spring:
-  datasource:
-    druid:
-      driver-class-name: oracle.jdbc.driver.OracleDriver
-      url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
-      username: appsquery
-      password: appsquery
-
-
-mybatis:
-  #mapper-locations: classpath:/com.lxf.migration.mapper/*.xml
-  mapper-locations: classpath*:/com.lxf.migration.mapper/*.xml
-  type-aliases-package: com.lxf.migration.pojo
+#spring:
+#  datasource:
+#    druid:
+#      driver-class-name: oracle.jdbc.driver.OracleDriver
+#      url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
+#      username: appsquery
+#      password: appsquery
 server:
   port: 8080
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
+    username: appsquery
+    password: appsquery
+
+mybatis:
+  mapper-locations: classpath:/com.lxf.migration.mapper/*.xml
+  type-aliases-package: com.lxf.migration.pojo
+
 
