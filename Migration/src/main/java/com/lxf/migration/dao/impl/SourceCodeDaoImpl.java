@@ -70,7 +70,7 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
 //    }
 
     @Autowired
-    @Qualifier("mapper")
+    @Qualifier("localMapper")
     private BFSMapper mapper;
 
     public static String convertClobToString(Clob clob) throws SQLException, IOException {

@@ -4,20 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lxf.migration.mapper.BFSMapper">
 
-    <resultMap id="selectDbaObjectsMap" type="DbaObjects">
+    <resultMap id="selectDbaObjectsMap" type="com.lxf.migration.pojo.DbaObjects">
         <result column="owner" property="owner"/>
         <result column="object_name" property="objectName"/>
         <result column="object_type" property="objectType"/>
     </resultMap>
 
-    <resultMap id="selecteAllDependenciesMap" type="DbaObjects">
+    <resultMap id="selecteAllDependenciesMap" type="com.lxf.migration.pojo.DbaObjects">
         <result column="referenced_owner" property="owner"/>
         <result column="referenced_name" property="objectName"/>
         <result column="referenced_type" property="objectType"/>
     </resultMap>
 
 
-    <resultMap id="selectPackageMap" type="package">
+    <resultMap id="selectPackageMap" type="com.lxf.migration.pojo.Package">
         <result column="owner" property="owner"/>
         <result column="name" property="name"/>
         <result column="type" property="type"/>
@@ -51,7 +51,7 @@
           and d.referenced_link_name is null
     </select>
 
-    <select id="selectIndexes" resultType="DbaObjects">
+    <select id="selectIndexes" resultType="com.lxf.migration.pojo.DbaObjects">
 
         select d.owner "owner", d.index_name "objectName", 'INDEX' "objectType"
         from dba_indexes d
@@ -80,7 +80,7 @@
           AND D.TYPE = 'PACKAGE BODY'
         ORDER BY LINE
     </select>
-    <select id="selectSynonym" resultType="DbaObjects">
+    <select id="selectSynonym" resultType="com.lxf.migration.pojo.DbaObjects">
         select d.owner        "owner",
                d.synonym_name "objectName",
                'SYNONYM'      "objectType"

@@ -22,7 +22,7 @@ import java.util.Map;
 @Service
 public class DependenciesDaoImpl implements DependenciesDao {
     @Autowired
-    @Qualifier("mapper")
+    @Qualifier("localMapper")
     private BFSMapper mapper;
     private ArrayList<Node> getNodes(List<DbaObjects> allNeighbors, Node parentNode, String dependence_type) {
         ArrayList<Node> nodes = new ArrayList<Node>();

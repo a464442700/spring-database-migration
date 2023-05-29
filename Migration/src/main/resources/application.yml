@@ -22,16 +22,22 @@
 #      username: appsquery
 #      password: appsquery
 server:
-  port: 8080
+  port: 8081
 spring:
   datasource:
-    driver-class-name: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
-    username: appsquery
-    password: appsquery
+    local:
+      driver-class-name: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
+      username: appsquery
+      password: appsquery
+    remote:
+      driver-class-name: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:@47.99.191.156:1521:STANDBY
+      username: appsquery
+      password: appsquery
 
 mybatis:
-  mapper-locations: classpath:/com.lxf.migration.mapper/*.xml
+  mapper-locations: classpath:/com/lxf/migration/mapper/*.xml
   type-aliases-package: com.lxf.migration.pojo
 
 

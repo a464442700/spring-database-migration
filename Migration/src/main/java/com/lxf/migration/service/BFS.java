@@ -6,13 +6,17 @@ import com.lxf.migration.algorithm.AdjacencyListGraph;
 import com.lxf.migration.dao.impl.DependenciesDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.pojo.Node;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 @Service
 public class BFS {
 
-
+    @Autowired
+    private SourceCodeDaoImpl s;
+    @Autowired
+    private  DependenciesDaoImpl d;
     public AdjacencyListGraph<Node> getGraph() {
         return graph;
     }
@@ -66,7 +70,7 @@ public class BFS {
     }
 
     private void setSourceCode(Node node){
-        SourceCodeDaoImpl s=new SourceCodeDaoImpl();
+     //   SourceCodeDaoImpl s=new SourceCodeDaoImpl();
         s.getSourcode(node);
         s.getSourcodeHash(node);
     }
@@ -86,7 +90,7 @@ public class BFS {
     }
 
     private ArrayList<Node> getNeighbors(Node node) {
-        DependenciesDaoImpl d = new DependenciesDaoImpl();
+     //   DependenciesDaoImpl d = new DependenciesDaoImpl();
         ArrayList<Node> nodes = d.findAllNeighborNode(node);
         return nodes;
     }
