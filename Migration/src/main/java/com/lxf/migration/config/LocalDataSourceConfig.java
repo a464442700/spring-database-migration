@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -78,16 +79,21 @@ import javax.sql.DataSource;
 @Configuration
 @MapperScan(basePackages = "com.lxf.migration.mapper", sqlSessionTemplateRef = "localSqlSessionTemplate")
 public class LocalDataSourceConfig {
-
+    @Autowired
+    private org.springframework.core.env.Environment env;
     // 创建数据源
     @Bean(name = "localDataSource")
     public DataSource localDataSource() {
         //DruidDataSource dataSource = new DruidDataSource();
         PooledDataSource dataSource = new PooledDataSource();
-        dataSource.setDriver("oracle.jdbc.OracleDriver");
-        dataSource.setUrl("jdbc:oracle:thin:@47.99.191.156:1521:DUPDB");
-        dataSource.setUsername("appsquery");
-        dataSource.setPassword("appsquery");
+        String driver = env.getProperty("spring.datasource.local.driver-class-name");
+        String userName = env.getProperty("spring.datasource.local.username");
+        String passWord = env.getProperty("spring.datasource.local.password");
+        String url = env.getProperty("spring.datasource.local.url");
+        dataSource.setDriver(driver);
+        dataSource.setUrl( url);
+        dataSource.setUsername(userName);
+        dataSource.setPassword( passWord);
         return dataSource;
     }
 

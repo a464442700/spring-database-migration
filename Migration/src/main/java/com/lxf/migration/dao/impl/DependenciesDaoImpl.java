@@ -46,7 +46,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
     private ArrayList<Node> getAllNeighborNode(Map dbaobjMap, Node parantNode) {
 
         List<DbaObjects> allDirectNeighbors = mapper.selecteDirectDependencies(dbaobjMap);
-        System.out.println("getAllNeighborNode执行成功");
+       // System.out.println("getAllNeighborNode执行成功");
         return getNodes(allDirectNeighbors, parantNode, "Direct");
 
     }
@@ -100,7 +100,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
 
     @Override
     public ArrayList<Node> findAllNeighborNode(Node node) {
-        String resource = "mybatis-config.xml";
+       // String resource = "mybatis-config.xml";
 
         Map dbaobjMap = new HashMap();
         dbaobjMap.put("owner", node.owner);
