@@ -1,28 +1,6 @@
-#spring:
-#  datasource:
-#    dynamic:
-#      primary: local
-#      strict: false
-#      datasource:
-#        local:
-#          url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
-#          username: appsquery
-#          password: appsquery
-#          driver-class-name: oracle.jdbc.driver.OracleDriver
-#        remote:
-#          url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
-#          username: appsquery
-#          password: appsquery
-#          driver-class-name: oracle.jdbc.driver.OracleDriver
-#spring:
-#  datasource:
-#    druid:
-#      driver-class-name: oracle.jdbc.driver.OracleDriver
-#      url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
-#      username: appsquery
-#      password: appsquery
+
 server:
-  port: 8081
+  port: 8080
 spring:
   datasource:
     local:

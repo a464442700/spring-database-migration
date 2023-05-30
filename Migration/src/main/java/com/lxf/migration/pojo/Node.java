@@ -13,7 +13,6 @@ public class Node {
     private String sourceCodeHash;
     private Node rootNode;
     private Integer maxLevel;
-
     public Integer getMaxLevel() {
         return maxLevel;
     }
@@ -49,7 +48,9 @@ public class Node {
     public String getDatabase() {
         return database;
     }
-
+   public  String getNodeVertex(){
+        return this.objectName+"("+this.objectType+")";
+   }
     public void setDatabase(String database) {
         this.database = database;
     }

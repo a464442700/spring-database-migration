@@ -10,6 +10,14 @@ public class AdjacencyListGraph<N> {
     private List<N> vertex;//顶点表
     private Map<N, List<N>> side;//边表
 
+    public List<N> getVertex() {
+        return vertex;
+    }
+
+    public Map<N, List<N>> getSide() {
+        return side;
+    }
+
     public AdjacencyListGraph() {
         this.vertex = new ArrayList<N>();
         this.side = new HashMap<N,List<N>>();

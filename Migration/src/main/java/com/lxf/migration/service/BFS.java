@@ -1,22 +1,31 @@
 package com.lxf.migration.service;
 
 
-
 import com.lxf.migration.algorithm.AdjacencyListGraph;
 import com.lxf.migration.dao.impl.DependenciesDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.pojo.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.*;
+
 @Service
+@RequestScope
 public class BFS {
 
     @Autowired
     private SourceCodeDaoImpl s;
     @Autowired
-    private  DependenciesDaoImpl d;
+    private DependenciesDaoImpl d;
+
+    private Boolean displaySourceCode;
+
+    public void setDisplaySourceCode(Boolean displaySourceCode) {
+        this.displaySourceCode = displaySourceCode;
+    }
+
     public AdjacencyListGraph<Node> getGraph() {
         return graph;
     }
@@ -25,14 +34,15 @@ public class BFS {
         this.startNode = startNode;
         this.queue = new LinkedList<Node>();
         this.set = new HashSet<Node>();
-        this.graph=new AdjacencyListGraph<Node>();
+        this.graph = new AdjacencyListGraph<Node>();
         this.init();
     }
-    public BFS(){
+
+    public BFS() {
 
         this.queue = new LinkedList<Node>();
         this.set = new HashSet<Node>();
-        this.graph=new AdjacencyListGraph<Node>();
+        this.graph = new AdjacencyListGraph<Node>();
         this.init();
 
     }
@@ -57,7 +67,6 @@ public class BFS {
     private Stack<Node> stack = new Stack<Node>();//访问一个节点入栈，这样从栈弹出顺序就是编译顺序
 
 
-
     //该节点是否被访问
     public boolean isVisited(Node node) {
 //        System.out.print(node);
@@ -69,8 +78,8 @@ public class BFS {
 
     }
 
-    private void setSourceCode(Node node){
-     //   SourceCodeDaoImpl s=new SourceCodeDaoImpl();
+    private void setSourceCode(Node node) {
+        //   SourceCodeDaoImpl s=new SourceCodeDaoImpl();
         s.getSourcode(node);
         s.getSourcodeHash(node);
     }
@@ -80,7 +89,10 @@ public class BFS {
         this.set.add(node);//写入集合
         this.stack.add(node);//入栈，作用是从栈弹出的一定是level最高的
         this.graph.addVertex(node);
-        this.setSourceCode(node);
+        //不打印速度会快一点
+        if (this.displaySourceCode) {
+            this.setSourceCode(node);
+        }
     }
 
     //初始化
@@ -90,21 +102,21 @@ public class BFS {
     }
 
     private ArrayList<Node> getNeighbors(Node node) {
-     //   DependenciesDaoImpl d = new DependenciesDaoImpl();
+        //   DependenciesDaoImpl d = new DependenciesDaoImpl();
         ArrayList<Node> nodes = d.findAllNeighborNode(node);
         return nodes;
     }
 
 
     public void Traverse() {
-        Node  v = this.startNode;//起始节点
+        Node v = this.startNode;//起始节点
         this.visited(v);//设置访问标记
         this.queue.add(v);//访问后入队
         while (!this.queue.isEmpty()) {
             v = this.queue.poll();//出队
             //开始访问所有v的子节点
             for (Node u : this.getNeighbors(v)) {
-                this.graph.addSide(v,u);
+                this.graph.addSide(v, u);
 
                 if (!this.isVisited(u)) {
                     this.visited(u);//访问
