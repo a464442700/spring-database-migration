@@ -45,6 +45,8 @@ public class JgraphtGraphPictureImpl implements GraphPicture {
 
         JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter(directedGraph);
 
+        graphAdapter.getEdgeToCellMap().forEach((edge,cell)->cell.setValue(null));
+
         mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
         layout.execute(graphAdapter.getDefaultParent());
         BufferedImage image = mxCellRenderer.createBufferedImage(graphAdapter, null, 2, Color.WHITE, true, null);
