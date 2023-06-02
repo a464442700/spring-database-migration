@@ -6,6 +6,8 @@ import com.lxf.migration.dao.impl.DependenciesDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.pojo.Node;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -35,14 +37,12 @@ public class BFS {
         this.queue = new LinkedList<Node>();
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
-        this.init();
+
     }
 
     public BFS() {
 
-        this.queue = new LinkedList<Node>();
-        this.set = new HashSet<Node>();
-        this.graph = new AdjacencyListGraph<Node>();
+
         this.init();
 
     }
@@ -96,9 +96,11 @@ public class BFS {
     }
 
     //初始化
-    private void init() {
+    public void init() {
 
-
+        this.queue = new LinkedList<Node>();
+        this.set = new HashSet<Node>();
+        this.graph = new AdjacencyListGraph<Node>();
     }
 
     private ArrayList<Node> getNeighbors(Node node) {

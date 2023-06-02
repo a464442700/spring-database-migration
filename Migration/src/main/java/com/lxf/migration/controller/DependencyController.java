@@ -1,6 +1,8 @@
 package com.lxf.migration.controller;
 
+import com.lxf.migration.output.SourceCode;
 import com.lxf.migration.output.impl.JgraphtGraphPictureImpl;
+import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.pojo.StartBFS;
 import com.lxf.migration.service.BFS;
@@ -23,17 +25,22 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Stack;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.jgrapht.graph.DefaultEdge;
+
 @RestController
 public class DependencyController {
     @Autowired
     private BFS bfs;
+    @Autowired
+    private SourceCode sourceCode;
     private Stack<Node> stack;
- //返回所有节点对象属性
+
+    //返回所有节点对象属性
     @PostMapping("/getAllDependencies")
     public ResponseEntity<Stack<Node>> createPayment(
             @RequestHeader(required = false) String requestId,
@@ -51,9 +58,7 @@ public class DependencyController {
     }
 
 
-
-
-//post请求返回节点顺序png图
+    //post请求返回节点顺序png图
     @PostMapping(value = "/allDependenciesGraph", produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     public byte[] allDependenciesGraph(
@@ -75,11 +80,11 @@ public class DependencyController {
     @GetMapping(value = "/getAllDependenciesGraph", produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     public byte[] getAllDependenciesGraph(
-       @RequestParam String owner,
-       @RequestParam String objectName,
-       @RequestParam String objectType
+            @RequestParam String owner,
+            @RequestParam String objectName,
+            @RequestParam String objectType
     ) {
-     var node =new Node(owner,objectName,objectType);
+        var node = new Node(owner, objectName, objectType);
         bfs.setStartNode(node);
         bfs.setDisplaySourceCode(false);
         bfs.Traverse();
@@ -88,52 +93,60 @@ public class DependencyController {
         JgraphtGraphPictureImpl jgraphtGraphPicture = new JgraphtGraphPictureImpl();
         return jgraphtGraphPicture.GetBinaryPicture(getGraph);
     }
+
+
+    //get请求下载所有依赖文件
+    @GetMapping(value = "/downloadAllDependenciesFile", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadAllDependenciesFile(
+            @RequestParam String owner,
+            @RequestParam String objectName,
+            @RequestParam String objectType
+    ) throws IOException {
+        var node = new Node(owner, objectName, objectType);
+        bfs.init();
+        bfs.setStartNode(node);
+        bfs.setDisplaySourceCode(true);
+        bfs.Traverse();
+        File file = sourceCode.getFile(bfs.getStack());
+
+
+        InputStreamResource isr = file.getFileStream();
+        String folderName = file.getFolderName();
+
+        return ResponseEntity.ok()
+                .contentLength(isr.length())
+                .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(isr);
+
+
+    }
+
     private void addToZipFile(String filename, String content, ZipOutputStream zos) throws IOException {
         ZipEntry zipEntry = new ZipEntry(filename);
         zos.putNextEntry(zipEntry);
         zos.write(content.getBytes());
         zos.closeEntry();
     }
-    //get请求下载所有依赖文件
-    @GetMapping(value = "/downloadAllDependenciesFile", produces = MediaType.IMAGE_PNG_VALUE)
-    @ResponseBody
-    public ResponseEntity<InputStreamResource>  downloadAllDependenciesFile(
-            @RequestParam String owner,
-            @RequestParam String objectName,
-            @RequestParam String objectType
-    ) {
-//        var node =new Node(owner,objectName,objectType);
-//        bfs.setStartNode(node);
-//        bfs.setDisplaySourceCode(true);
-//        bfs.Traverse();
 
+    @GetMapping(value = "/download")
+    public ResponseEntity<InputStreamResource> download() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ZipOutputStream zos = new ZipOutputStream(baos);
 
-        try {
-            addToZipFile("file1.txt", "1", zos);
-            zos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        addToZipFile("file1.txt", "1", zos);
+        addToZipFile("file2.txt", "2", zos);
 
-        try {
-            addToZipFile("file2.txt", "2", zos);
-            baos.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+        zos.close();
+        baos.close();
         InputStreamResource isr = new InputStreamResource(new ByteArrayInputStream(baos.toByteArray()));
 
         return ResponseEntity.ok()
+
                 .header("Content-Disposition", "attachment; filename=files.zip")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(isr);
-
-
     }
 
 }
