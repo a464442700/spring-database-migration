@@ -7,12 +7,22 @@ public class Node {
     public String objectName;
     public String objectType;
     private Integer level = 0;
-    private String database;
+    public String database;
     private String dependence_type;
     private String sourceCode;
     private String sourceCodeHash;
     private Node rootNode;
     private Integer maxLevel;
+    private boolean showSourceCode;
+
+    public boolean getShowSourceCode() {
+        return showSourceCode;
+    }
+
+    public void setShowSourceCode(boolean showSourceCode) {
+        this.showSourceCode = showSourceCode;
+    }
+
     public Integer getMaxLevel() {
         return maxLevel;
     }

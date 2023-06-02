@@ -71,10 +71,14 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
 //
 //    }
 
-    @Autowired
-    @Qualifier("localMapper")
-    private BFSMapper mapper;
+//    @Autowired
+//    @Qualifier("localMapper")
+//    private BFSMapper mapper;
 
+    private BFSMapper mapper;
+    public void setMapper(BFSMapper mapper) {
+        this.mapper = mapper;
+    }
     public static String convertClobToString(Clob clob) throws SQLException, IOException {
         if (clob == null) {
             return "";

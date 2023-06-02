@@ -67,12 +67,13 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
     }
 
     public String getFolderName(Node node) {
-//        return "[" + node.getRootNode().getDatabase() + "]" + "[" +
-//                node.getRootNode().owner + "." +
-//                node.getRootNode().objectName + "." + node.getRootNode().objectType + "]" +
-//
-//                sdf.format(date).toString();
-        return "xxx";
+
+        return "[" + node.getRootNode().getDatabase() + "]" + "[" +
+                node.getRootNode().owner + "." +
+                node.getRootNode().objectName + "." + node.getRootNode().objectType + "]" +
+
+                sdf.format(date).toString();
+
     }
 
     private String getFileName(Node node) {

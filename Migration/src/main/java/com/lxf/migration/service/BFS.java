@@ -22,6 +22,11 @@ public class BFS {
     @Autowired
     private DependenciesDaoImpl d;
 
+    private String database;
+    public void setDatabase(String database){
+        this.database=database;
+    }
+
     private Boolean displaySourceCode;
 
     public void setDisplaySourceCode(Boolean displaySourceCode) {
@@ -49,6 +54,8 @@ public class BFS {
 
     public void setStartNode(Node startNode) {
         this.startNode = startNode;
+        this.database=startNode.database;
+      this.displaySourceCode=startNode.getShowSourceCode();
     }
 
     private AdjacencyListGraph<Node> graph;
@@ -137,4 +144,6 @@ public class BFS {
 }
 
 //react-force-graph
+//图可视化框架，本项目未采用
 //https://potoyang.gitbook.io/spring-in-action-v5/
+//在线电子书

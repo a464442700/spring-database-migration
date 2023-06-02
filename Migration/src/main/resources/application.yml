@@ -10,7 +10,7 @@ spring:
       password: appsquery
     remote:
       driver-class-name: oracle.jdbc.OracleDriver
-      url: jdbc:oracle:thin:@47.99.191.156:1521:STANDBY
+      url: jdbc:oracle:thin:@47.99.191.156:1521:STANDBYS
       username: appsquery
       password: appsquery
 

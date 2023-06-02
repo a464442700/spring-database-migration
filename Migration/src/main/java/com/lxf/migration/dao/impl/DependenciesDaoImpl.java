@@ -23,9 +23,15 @@ import java.util.Map;
 @Service
 @RequestScope
 public class DependenciesDaoImpl implements DependenciesDao {
-    @Autowired
-    @Qualifier("localMapper")
+//    @Autowired
+//    @Qualifier("localMapper")
+//    private BFSMapper mapper;
+    //将静态注入改成动态注入
+
     private BFSMapper mapper;
+    public void setMapper(BFSMapper mapper) {
+        this.mapper = mapper;
+    }
     private ArrayList<Node> getNodes(List<DbaObjects> allNeighbors, Node parentNode, String dependence_type) {
         ArrayList<Node> nodes = new ArrayList<Node>();
 

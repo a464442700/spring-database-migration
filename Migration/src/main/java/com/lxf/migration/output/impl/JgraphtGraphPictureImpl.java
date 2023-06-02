@@ -4,8 +4,11 @@ import com.lxf.migration.algorithm.AdjacencyListGraph;
 import com.lxf.migration.output.GraphPicture;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.service.BFS;
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.util.mxCellRenderer;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.jgrapht.DirectedGraph;
@@ -13,13 +16,14 @@ import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 
 public class JgraphtGraphPictureImpl implements GraphPicture {
 

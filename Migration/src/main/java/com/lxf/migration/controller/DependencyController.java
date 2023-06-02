@@ -4,15 +4,7 @@ import com.lxf.migration.output.SourceCode;
 import com.lxf.migration.output.impl.JgraphtGraphPictureImpl;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
-import com.lxf.migration.pojo.StartBFS;
 import com.lxf.migration.service.BFS;
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.util.mxCellRenderer;
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.ext.JGraphXAdapter;
-import org.jgrapht.graph.DefaultDirectedGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -20,17 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Stack;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import org.jgrapht.graph.DefaultEdge;
 
 @RestController
 public class DependencyController {
@@ -44,11 +29,10 @@ public class DependencyController {
     @PostMapping("/getAllDependencies")
     public ResponseEntity<Stack<Node>> createPayment(
             @RequestHeader(required = false) String requestId,
-            @RequestBody StartBFS startBFS
+            @RequestBody Node node
     ) {
 
-        bfs.setStartNode(startBFS.node);
-        bfs.setDisplaySourceCode(startBFS.showSourceCode);
+        bfs.setStartNode(node);
         bfs.Traverse();
         stack = bfs.getStack();
 
@@ -62,12 +46,13 @@ public class DependencyController {
     @PostMapping(value = "/allDependenciesGraph", produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     public byte[] allDependenciesGraph(
-            @RequestBody StartBFS startBFS
+            @RequestBody Node node
 
     ) {
 
-        bfs.setStartNode(startBFS.node);
-        bfs.setDisplaySourceCode(startBFS.showSourceCode);
+        bfs.setStartNode(node);
+
+
         bfs.Traverse();
         var getGraph = bfs.getGraph();
 
@@ -77,9 +62,9 @@ public class DependencyController {
 
 
     //get请求返回节点顺序png图
-    @GetMapping(value = "/getAllDependenciesGraph", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/downAllDependenciesGraph", produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
-    public byte[] getAllDependenciesGraph(
+    public byte[] downAllDependenciesGraph(
             @RequestParam String owner,
             @RequestParam String objectName,
             @RequestParam String objectType
@@ -115,7 +100,7 @@ public class DependencyController {
         String folderName = file.getFolderName();
 
         return ResponseEntity.ok()
-                .contentLength(isr.length())
+
                 .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(isr);
@@ -130,23 +115,5 @@ public class DependencyController {
         zos.closeEntry();
     }
 
-    @GetMapping(value = "/download")
-    public ResponseEntity<InputStreamResource> download() throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ZipOutputStream zos = new ZipOutputStream(baos);
-
-        addToZipFile("file1.txt", "1", zos);
-        addToZipFile("file2.txt", "2", zos);
-
-        zos.close();
-        baos.close();
-        InputStreamResource isr = new InputStreamResource(new ByteArrayInputStream(baos.toByteArray()));
-
-        return ResponseEntity.ok()
-
-                .header("Content-Disposition", "attachment; filename=files.zip")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(isr);
-    }
 
 }

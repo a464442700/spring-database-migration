@@ -1,0 +1,4 @@
+下载所有程序包:
+http://localhost:8080/downloadAllDependenciesFile?owner=APPS&objectName=CUX_TABLE_PUB&objectType=PACKAGE
+下载图：
+http://localhost:8080/downAllDependenciesGraph?owner=APPS&objectName=CUX_TABLE_PUB&objectType=PACKAGE
