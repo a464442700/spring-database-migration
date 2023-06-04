@@ -68,7 +68,10 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
     }
 
     private String getFileName(Node node) {
+
         String fileName = "[" + StringUtils.leftPad(String.valueOf(node.getMaxLevel() - node.getLevel()), 3, "0") + "]"
+
+                + "[" + node.getMode() + "]"
                 + "[" + node.getDatabase() + "]"
                 + "[" + node.objectType + "]"
                 + node.owner + "."
@@ -122,7 +125,7 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
     }
     public File getCompareFile(List<Node> localNodes,List<Node> remoteNodes) throws IOException{
 
-        return  new File();
+        return getFile(getCompareNode(localNodes,remoteNodes)) ;
     }
 
 
@@ -147,7 +150,7 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
                         .anyMatch(node2 -> Objects.equals(node1.owner, node2.owner)
                                 && Objects.equals(node1.objectType, node2.objectType)
                                 && Objects.equals(node1.objectName, node2.objectName)
-                                && !Objects.equals(node1.sourceCodeHash, node2.sourceCodeHash)
+                                && Objects.equals(node1.sourceCodeHash, node2.sourceCodeHash)
                         ))
                 .collect(Collectors.toList());
 
@@ -165,6 +168,7 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
 
         DeleteResult.stream().forEach(node->{
             node.setMode("Delete");
+            node.setSourceCode(null);
 
         });
 

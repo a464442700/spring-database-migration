@@ -20,6 +20,10 @@ public class SourceCode {
         return sourceCodeToFile.getFile(nodes);
 
     }
+    public File getCompareFile(List<Node> localNodes,List<Node> remoteNodes) throws IOException {
+        return sourceCodeToFile.getCompareFile(localNodes,remoteNodes);
+
+    }
 
 
 }

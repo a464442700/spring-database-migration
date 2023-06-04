@@ -20,7 +20,7 @@ public class Node {
         this.mode = mode;
     }
 
-    private String mode;
+    private String mode ="add";
     private String sourceCode;
     public String sourceCodeHash;
     private Node rootNode;

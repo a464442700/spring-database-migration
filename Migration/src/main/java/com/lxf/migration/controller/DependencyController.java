@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Stack;
 
 @RestController
@@ -111,6 +112,51 @@ public class DependencyController {
 
     }
 
+
+    @GetMapping(value = "/downloadCompareDependenciesFile", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadCompareDependenciesFile(
+            @RequestParam String owner1,
+            @RequestParam String objectName1,
+            @RequestParam String objectType1,
+            @RequestParam String dataSource1,
+            @RequestParam String owner2,
+            @RequestParam String objectName2,
+            @RequestParam String objectType2,
+            @RequestParam String dataSource2
+
+    ) throws IOException {
+        var node1 = new Node(owner1, objectName1, objectType1);
+        bfs.init();
+        bfs.setDataSource(dataSource1);
+        bfs.setStartNode(node1);
+        bfs.setDisplaySourceCode(true);
+        bfs.Traverse();
+        List<Node> localNodes =bfs.getStack();
+
+        var node2= new Node(owner2, objectName2, objectType2);
+        bfs.init();
+        bfs.setDataSource(dataSource2);
+        bfs.setStartNode(node2);
+        bfs.setDisplaySourceCode(true);
+        bfs.Traverse();
+        List<Node> RemoteNodes =bfs.getStack();
+
+        File file = sourceCode.getCompareFile(localNodes,RemoteNodes);
+
+
+
+        InputStreamResource isr = file.getFileStream();
+        String folderName = file.getFolderName();
+
+        return ResponseEntity.ok()
+
+                .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(isr);
+
+
+    }
 
 
 }
