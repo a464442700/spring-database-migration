@@ -1,9 +1,7 @@
-package com.lxf.migration.output;
+package com.lxf.migration.file;
 
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
-import org.springframework.core.io.InputStreamResource;
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 
 import java.io.IOException;
 import java.util.List;

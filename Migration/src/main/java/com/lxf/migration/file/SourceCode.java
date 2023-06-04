@@ -1,11 +1,8 @@
-package com.lxf.migration.output;
+package com.lxf.migration.file;
 
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -23,4 +20,6 @@ public class SourceCode {
         return sourceCodeToFile.getFile(nodes);
 
     }
+
+
 }

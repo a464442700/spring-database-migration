@@ -1,21 +1,14 @@
-package com.lxf.migration.output.impl;
+package com.lxf.migration.file.impl;
 
-import com.lxf.migration.output.SourceCodeToFile;
+import com.lxf.migration.file.SourceCodeToFile;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
-import oracle.security.crypto.core.SREntropySource;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;

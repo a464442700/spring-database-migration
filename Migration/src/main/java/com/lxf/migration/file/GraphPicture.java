@@ -1,4 +1,4 @@
-package com.lxf.migration.output;
+package com.lxf.migration.file;
 
 import com.lxf.migration.algorithm.AdjacencyListGraph;
 import com.lxf.migration.pojo.Node;
