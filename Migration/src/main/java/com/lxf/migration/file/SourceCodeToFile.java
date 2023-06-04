@@ -10,5 +10,5 @@ public interface SourceCodeToFile {
     public File getFile(List<Node> nodes) throws IOException;
 
 
-
+    public File getCompareFile(List<Node> localNodes,List<Node> remoteNodes) throws IOException;
 }

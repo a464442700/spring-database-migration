@@ -10,10 +10,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -122,5 +120,61 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
         file.setFileStream(inputStreamResource);
         return file;
     }
+    public File getCompareFile(List<Node> localNodes,List<Node> remoteNodes) throws IOException{
+
+        return  new File();
+    }
+
+
+    public List<Node>  getCompareNode(List<Node> localNodes,List<Node> remoteNodes){
+     List<Node> result= new ArrayList<Node>();
+        //add
+        List<Node> AddResult = localNodes.stream()
+                .filter(node1 -> remoteNodes.stream()
+                        .noneMatch(node2 -> Objects.equals(node1.owner, node2.owner)
+                                && Objects.equals(node1.objectType, node2.objectType)
+                                && Objects.equals(node1.objectName, node2.objectName)
+                        ))
+                .collect(Collectors.toList());
+
+        AddResult.stream().forEach(node->{
+            node.setMode("Add");
+
+        });
+
+        List<Node> UpdateResult = localNodes.stream()
+                .filter(node1 -> remoteNodes.stream()
+                        .anyMatch(node2 -> Objects.equals(node1.owner, node2.owner)
+                                && Objects.equals(node1.objectType, node2.objectType)
+                                && Objects.equals(node1.objectName, node2.objectName)
+                                && !Objects.equals(node1.sourceCodeHash, node2.sourceCodeHash)
+                        ))
+                .collect(Collectors.toList());
+
+        UpdateResult.stream().forEach(node->{
+            node.setMode("Update");
+
+        });
+        List<Node> DeleteResult = remoteNodes .stream()
+                .filter(node1 -> localNodes.stream()
+                        .noneMatch(node2 -> Objects.equals(node1.owner, node2.owner)
+                                && Objects.equals(node1.objectType, node2.objectType)
+                                && Objects.equals(node1.objectName, node2.objectName)
+                        ))
+                .collect(Collectors.toList());
+
+        DeleteResult.stream().forEach(node->{
+            node.setMode("Delete");
+
+        });
+
+        result.addAll(AddResult);
+        result.addAll(UpdateResult);
+        result.addAll(DeleteResult);
+        return result;
+
+
+    }
+
 
 }

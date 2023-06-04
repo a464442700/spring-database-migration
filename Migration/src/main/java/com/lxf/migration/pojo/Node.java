@@ -11,8 +11,18 @@ public class Node {
 
     public  String dataSource;
     private String dependence_type;
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    private String mode;
     private String sourceCode;
-    private String sourceCodeHash;
+    public String sourceCodeHash;
     private Node rootNode;
     private Integer maxLevel;
     private boolean showSourceCode;
