@@ -16,15 +16,22 @@ import java.util.*;
 @Service
 @RequestScope
 public class BFS {
+    public SourceCodeDaoImpl getSourceCodeDaoImpl() {
+        return s;
+    }
+
+    public DependenciesDaoImpl getDependenciesDaoImpl() {
+        return d;
+    }
 
     @Autowired
     private SourceCodeDaoImpl s;
     @Autowired
     private DependenciesDaoImpl d;
 
-    private String database;
-    public void setDatabase(String database){
-        this.database=database;
+    private String dataSource;
+    public void setDataSource(String dataSource){
+        this.dataSource=dataSource;
     }
 
     private Boolean displaySourceCode;
@@ -54,8 +61,7 @@ public class BFS {
 
     public void setStartNode(Node startNode) {
         this.startNode = startNode;
-        this.database=startNode.database;
-      this.displaySourceCode=startNode.getShowSourceCode();
+     this.displaySourceCode=startNode.getShowSourceCode();
     }
 
     private AdjacencyListGraph<Node> graph;

@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Stack;
 import java.util.zip.ZipEntry;
@@ -31,7 +32,7 @@ public class DependencyController {
             @RequestHeader(required = false) String requestId,
             @RequestBody Node node
     ) {
-
+        bfs.setDataSource(node.dataSource);
         bfs.setStartNode(node);
         bfs.Traverse();
         stack = bfs.getStack();
@@ -50,6 +51,7 @@ public class DependencyController {
 
     ) {
 
+        bfs.setDataSource(node.dataSource);
         bfs.setStartNode(node);
 
 
@@ -67,9 +69,11 @@ public class DependencyController {
     public byte[] downAllDependenciesGraph(
             @RequestParam String owner,
             @RequestParam String objectName,
-            @RequestParam String objectType
+            @RequestParam String objectType,
+            @RequestParam String dataSource
     ) {
         var node = new Node(owner, objectName, objectType);
+        bfs.setDataSource(dataSource);
         bfs.setStartNode(node);
         bfs.setDisplaySourceCode(false);
         bfs.Traverse();
@@ -86,10 +90,12 @@ public class DependencyController {
     public ResponseEntity<InputStreamResource> downloadAllDependenciesFile(
             @RequestParam String owner,
             @RequestParam String objectName,
-            @RequestParam String objectType
+            @RequestParam String objectType,
+            @RequestParam String dataSource
     ) throws IOException {
         var node = new Node(owner, objectName, objectType);
         bfs.init();
+        bfs.setDataSource(dataSource);
         bfs.setStartNode(node);
         bfs.setDisplaySourceCode(true);
         bfs.Traverse();
@@ -108,12 +114,6 @@ public class DependencyController {
 
     }
 
-    private void addToZipFile(String filename, String content, ZipOutputStream zos) throws IOException {
-        ZipEntry zipEntry = new ZipEntry(filename);
-        zos.putNextEntry(zipEntry);
-        zos.write(content.getBytes());
-        zos.closeEntry();
-    }
 
 
 }
