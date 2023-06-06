@@ -21,4 +21,5 @@ public interface BFSMapper {
     String selectDataBase();
     void callGetHashCode(Map map);
     void callGetDDL(Map map);
+    void callSetIdentifier(Map map);
 }

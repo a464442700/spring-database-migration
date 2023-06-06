@@ -132,4 +132,12 @@ public class LocalDataSourceConfig {
         return  localSqlSessionTemplate.getMapper(BFSMapper.class);
     }
 
+
+//    public SessionInterceptor sessionInterceptor(
+//            @Qualifier(value ="localMapper" )   BFSMapper localMapper
+//    ) {
+//        SessionInterceptor interceptor = new SessionInterceptor();
+//        interceptor.setMapper(localMapper);
+//        return interceptor;
+//    }
 }

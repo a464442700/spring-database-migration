@@ -31,6 +31,7 @@ public class DataSourceAspect {
         if("local".equals(dataSource)){
             dependenciesDao.setMapper(localMapper);
              sourceCodeDao.setMapper(localMapper);
+
         }else if ("remote".equals(dataSource)){
             dependenciesDao.setMapper(remoteMapper);
             sourceCodeDao.setMapper(remoteMapper);
