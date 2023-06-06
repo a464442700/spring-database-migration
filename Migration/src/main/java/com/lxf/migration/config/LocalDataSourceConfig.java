@@ -1,8 +1,10 @@
 package com.lxf.migration.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.lxf.migration.dao.impl.SessionInterceptor;
 import com.lxf.migration.mapper.BFSMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -81,6 +83,12 @@ import javax.sql.DataSource;
 public class LocalDataSourceConfig {
     @Autowired
     private org.springframework.core.env.Environment env;
+
+    @Bean
+    public SessionInterceptor sessionInterceptor() {
+        return new SessionInterceptor();
+    }
+
     // 创建数据源
     @Bean(name = "localDataSource")
     public DataSource localDataSource() {
@@ -103,6 +111,7 @@ public class LocalDataSourceConfig {
     @Primary
     public SqlSessionFactory localSqlSessionFactory(@Qualifier("localDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+        bean.setPlugins(new Interceptor[]{sessionInterceptor()});//拦截器
         bean.setDataSource(dataSource);
         return bean.getObject();
     }

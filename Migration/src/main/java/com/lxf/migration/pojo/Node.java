@@ -108,6 +108,7 @@ public class Node {
                 ", objectType='" + objectType + '\'' +
                 ", level=" + level +
                 ", database='" + database + '\'' +
+                ", dataSource='" + dataSource + '\'' +
                 ", sourceCodeHash='" + sourceCodeHash + '\'' +
                 ", maxLevel=" + maxLevel +
                 '}';

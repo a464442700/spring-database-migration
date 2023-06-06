@@ -78,7 +78,7 @@ public class BFS {
         return this.set;
     }
 
-    private Stack<Node> stack = new Stack<Node>();//访问一个节点入栈，这样从栈弹出顺序就是编译顺序
+    private Stack<Node> stack ;//访问一个节点入栈，这样从栈弹出顺序就是编译顺序
 
 
     //该节点是否被访问
@@ -115,6 +115,7 @@ public class BFS {
         this.queue = new LinkedList<Node>();
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
+        this.stack=new Stack<Node>();
     }
 
     private ArrayList<Node> getNeighbors(Node node) {

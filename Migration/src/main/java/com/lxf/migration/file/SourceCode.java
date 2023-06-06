@@ -17,10 +17,13 @@ public class SourceCode {
 
 
     public File getFile(List<Node> nodes) throws IOException {
+        sourceCodeToFile.dealNodes(nodes);//用于获取max level 和root node
         return sourceCodeToFile.getFile(nodes);
 
     }
     public File getCompareFile(List<Node> localNodes,List<Node> remoteNodes) throws IOException {
+        sourceCodeToFile.dealNodes(localNodes);
+        sourceCodeToFile.dealNodes(remoteNodes);
         return sourceCodeToFile.getCompareFile(localNodes,remoteNodes);
 
     }

@@ -3,6 +3,7 @@ package com.lxf.migration.file.impl;
 import com.lxf.migration.file.SourceCodeToFile;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
 
@@ -43,9 +44,9 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
         map.put("rootNode", rootNode);
         return map;
     }
-
+  @Override
     public void dealNodes(List<Node> nodes) {
-        if (!dealFlag) {
+     //   if (!dealFlag) {
             Map<String, Object> map = getMaxLevel(nodes);
 
 
@@ -53,8 +54,8 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
                 node.setMaxLevel((Integer) map.get("maxLevel"));
                 node.setRootNode((Node) map.get("rootNode"));
             });
-            dealFlag = true;
-        }
+       //     dealFlag = true;
+       // }
     }
 
     public String getFolderName(Node node) {
@@ -114,8 +115,13 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
     }
 
     public File getFile(List<Node> nodes) throws IOException {
-        dealNodes(nodes);
         File file = new File();
+        if (nodes.isEmpty()) {
+            return file;
+        }
+
+      //  dealNodes(nodes);
+
         String folderName = getFolderName(nodes.get(0));
         InputStreamResource inputStreamResource = getFileStream(nodes);
 
@@ -123,14 +129,21 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
         file.setFileStream(inputStreamResource);
         return file;
     }
-    public File getCompareFile(List<Node> localNodes,List<Node> remoteNodes) throws IOException{
 
-        return getFile(getCompareNode(localNodes,remoteNodes)) ;
+    public File getCompareFile(List<Node> localNodes, List<Node> remoteNodes) throws IOException {
+
+        return getFile(getCompareNode(localNodes, remoteNodes));
     }
 
+    public String  getDeleteContent(Node node){
 
-    public List<Node>  getCompareNode(List<Node> localNodes,List<Node> remoteNodes){
-     List<Node> result= new ArrayList<Node>();
+        return "DROP"+ " "+node.objectType+" "+node.owner+"."+node.objectName+";";
+
+    }
+    public List<Node> getCompareNode(List<Node> localNodes, List<Node> remoteNodes) {
+        System.out.println("localNodes:" + localNodes);
+        System.out.println("remoteNodes:" + remoteNodes);
+        List<Node> result = new ArrayList<Node>();
         //add
         List<Node> AddResult = localNodes.stream()
                 .filter(node1 -> remoteNodes.stream()
@@ -140,25 +153,29 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
                         ))
                 .collect(Collectors.toList());
 
-        AddResult.stream().forEach(node->{
+        AddResult.stream().forEach(node -> {
             node.setMode("Add");
 
         });
+        //   System.out.println("AddResult:");
+        //  System.out.println(AddResult);
 
         List<Node> UpdateResult = localNodes.stream()
                 .filter(node1 -> remoteNodes.stream()
                         .anyMatch(node2 -> Objects.equals(node1.owner, node2.owner)
                                 && Objects.equals(node1.objectType, node2.objectType)
                                 && Objects.equals(node1.objectName, node2.objectName)
-                                && Objects.equals(node1.sourceCodeHash, node2.sourceCodeHash)
+                                && !Objects.equals(node1.sourceCodeHash, node2.sourceCodeHash)
                         ))
                 .collect(Collectors.toList());
 
-        UpdateResult.stream().forEach(node->{
+        UpdateResult.stream().forEach(node -> {
             node.setMode("Update");
 
         });
-        List<Node> DeleteResult = remoteNodes .stream()
+        //    System.out.println("UpdateResult:");
+        //  System.out.println( UpdateResult);
+        List<Node> DeleteResult = remoteNodes.stream()
                 .filter(node1 -> localNodes.stream()
                         .noneMatch(node2 -> Objects.equals(node1.owner, node2.owner)
                                 && Objects.equals(node1.objectType, node2.objectType)
@@ -166,12 +183,13 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
                         ))
                 .collect(Collectors.toList());
 
-        DeleteResult.stream().forEach(node->{
+        DeleteResult.stream().forEach(node -> {
             node.setMode("Delete");
-            node.setSourceCode(null);
+            node.setSourceCode(getDeleteContent(node));
 
         });
-
+        //System.out.println(" DeleteResult:");
+        //    System.out.println(  DeleteResult);
         result.addAll(AddResult);
         result.addAll(UpdateResult);
         result.addAll(DeleteResult);

@@ -1,0 +1,11 @@
+创建只读用户，并授权
+create user appsquery identified by apps --密码
+default tablespace APPS_TABLE --默认表空间，不指定默认system--当然也可以自己创建新的表空间，语法自行搜素
+temporary tablespace TEMP --临时表空间，作用相当于虚拟内存
+quota 0 on APPS_TABLE   ;--0表示此默认表空间配额为0，表示此表空间一点空间都不会给此用户分配
+
+grant create session to appsquery;--能连接数据库分配会话
+
+grant select any dictionary to appsquery;--授权数据字典表查询权限，数据字典表就是那些dba,v$开头的表
+
+grant select any table to appsquery;--授权所有表查询权限，如果这个不执行，就只能查数据字典表。

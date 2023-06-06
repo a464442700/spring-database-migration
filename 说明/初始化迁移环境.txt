@@ -1,0 +1,60 @@
+环境准备
+create user cux--用户名
+  identified by "apps"--密码
+  default tablespace APPS_TABLE--表空间名
+  temporary tablespace TEMP --临时表空间名
+  
+grant unlimited tablespace to cux;
+
+create table cux.cux_table(id number,name varchar2(240));
+
+create unique index cux.cux_table_u1 on  cux.cux_table(id ) tablespace APPS_IDX ;
+create index cux.cux_table_n1 on  cux.cux_table(name ) tablespace APPS_IDX ;
+create synonym apps.cux_table for cux.cux_table;
+create sequence cux.cux_table_s
+INCREMENT BY 1
+START WITH 1 
+NOMAXVALUE 
+NOCYCLE 
+CACHE 10; 
+create synonym apps.cux_table for cux.cux_table;
+create synonym apps.cux_table_s for cux.cux_table_s;
+insert into cux.cux_table(id ,name)values(apps.cux_table_s.nextval,'a');
+create view  apps.cux_table_v as select * from  cux.cux_table;
+
+create or replace package cux_table_pvt is
+
+  function get_name(p_id in number) return varchar2;
+  
+end   cux_table_pvt;
+/
+create or replace package body cux_table_pvt is
+  function get_name(p_id in number) return varchar2 is
+    l_name varchar2(240);
+  begin
+    select name into l_name from cux_table_v where id = p_id;
+    return l_name;
+  exception
+    when others then
+      return null;
+  end get_name;
+
+end cux_table_pvt;
+/
+
+create or replace package cux_table_pub  is
+
+  function get_name(p_id in number) return varchar2 ;
+end cux_table_pub ;
+/
+
+create or replace package body cux_table_pub  is
+
+
+  function get_name(p_id in number) return varchar2 is
+    begin
+      return cux_table_pvt.get_name(p_id);
+    end;
+end ;
+/
+

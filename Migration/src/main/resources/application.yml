@@ -10,12 +10,10 @@ spring:
       password: appsquery
     remote:
       driver-class-name: oracle.jdbc.OracleDriver
-      url: jdbc:oracle:thin:@47.99.191.156:1521:STANDBY
-      username: appsquery
-      password: appsquery
+      url: jdbc:oracle:thin:@//10.94.55.64:1522/xepdb1
+      username: apps
+      password: apps
 
 mybatis:
   mapper-locations: classpath:/com/lxf/migration/mapper/*.xml
   type-aliases-package: com.lxf.migration.pojo
-
-

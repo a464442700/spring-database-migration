@@ -32,6 +32,7 @@ public class DependencyController {
     ) {
         bfs.setDataSource(node.dataSource);
         bfs.setStartNode(node);
+        //    bfs.setDisplaySourceCode(true);
         bfs.Traverse();
         stack = bfs.getStack();
 

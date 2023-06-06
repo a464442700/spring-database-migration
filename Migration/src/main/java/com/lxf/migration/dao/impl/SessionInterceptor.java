@@ -2,9 +2,10 @@ package com.lxf.migration.dao.impl;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.plugin.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
-
 @Intercepts({
         @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})
 })
@@ -21,4 +22,8 @@ public class SessionInterceptor implements Interceptor {
         System.out.println("生效拦截器");
         //暂时不知道如何获取sqlsession
     }
+//    @Override
+//    public Object plugin(Object target) {
+//        return Plugin.wrap(target, this);
+//    }
 }

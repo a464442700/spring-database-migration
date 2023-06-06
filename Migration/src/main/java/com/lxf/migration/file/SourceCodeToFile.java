@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface SourceCodeToFile {
+    public void dealNodes(List<Node> nodes);
     public File getFile(List<Node> nodes) throws IOException;
 
 
