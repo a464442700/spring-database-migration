@@ -8,14 +8,17 @@ import com.lxf.migration.pojo.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.*;
 
 @Service
-@RequestScope
-public class BFS {
+//@RequestScope
+@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class BFS implements Runnable  {
     public SourceCodeDaoImpl getSourceCodeDaoImpl() {
         return s;
     }
@@ -148,6 +151,11 @@ public class BFS {
 
     public static void main(String[] args) {
 
+    }
+
+    @Override
+    public void run() {
+        Traverse();
     }
 }
 

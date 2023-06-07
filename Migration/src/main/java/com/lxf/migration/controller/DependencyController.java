@@ -6,11 +6,14 @@ import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.service.BFS;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,6 +23,10 @@ import java.util.Stack;
 public class DependencyController {
     @Autowired
     private BFS bfs;
+    @Autowired
+    private BFS bfs1;
+    @Autowired
+    private BFS bfs2;
     @Autowired
     private SourceCode sourceCode;
     private Stack<Node> stack;
@@ -127,24 +134,51 @@ public class DependencyController {
             @RequestParam String dataSource2
 
     ) throws IOException {
+//        var node1 = new Node(owner1, objectName1, objectType1);
+//        bfs.init();
+//        bfs.setDataSource(dataSource1);
+//        bfs.setStartNode(node1);
+//        bfs.setDisplaySourceCode(true);
+//        bfs.Traverse();
+//        List<Node> localNodes =bfs.getStack();
+//
+//        var node2= new Node(owner2, objectName2, objectType2);
+//        bfs.init();
+//        bfs.setDataSource(dataSource2);
+//        bfs.setStartNode(node2);
+//        bfs.setDisplaySourceCode(true);
+//        bfs.Traverse();
+//        List<Node> RemoteNodes =bfs.getStack();
+
+
         var node1 = new Node(owner1, objectName1, objectType1);
-        bfs.init();
-        bfs.setDataSource(dataSource1);
-        bfs.setStartNode(node1);
-        bfs.setDisplaySourceCode(true);
-        bfs.Traverse();
-        List<Node> localNodes =bfs.getStack();
+        var node2 = new Node(owner2, objectName2, objectType2);
+     //   var bfs1 = new BFS();
+      //  var bfs2 = new BFS();
+        bfs1.setDataSource(dataSource1);
+        bfs1.setStartNode(node1);
+        bfs1.setDisplaySourceCode(true);
 
-        var node2= new Node(owner2, objectName2, objectType2);
-        bfs.init();
-        bfs.setDataSource(dataSource2);
-        bfs.setStartNode(node2);
-        bfs.setDisplaySourceCode(true);
-        bfs.Traverse();
-        List<Node> RemoteNodes =bfs.getStack();
+        bfs2.setDataSource(dataSource2);
+        bfs2.setStartNode(node2);
+        bfs2.setDisplaySourceCode(true);
 
-        File file = sourceCode.getCompareFile(localNodes,RemoteNodes);
+        Thread thread1 = new Thread(bfs1);
+        Thread thread2 = new Thread(bfs2);
+        thread1.start();
+        thread2.start();
 
+        // 等待两个线程执行完毕
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        List<Node> localNodes = bfs1.getStack();
+        List<Node> RemoteNodes = bfs2.getStack();
+        File file = sourceCode.getCompareFile(localNodes, RemoteNodes);
 
 
         InputStreamResource isr = file.getFileStream();
