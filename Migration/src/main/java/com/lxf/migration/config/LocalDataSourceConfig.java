@@ -111,7 +111,7 @@ public class LocalDataSourceConfig {
     @Primary
     public SqlSessionFactory localSqlSessionFactory(@Qualifier("localDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
-        bean.setPlugins(new Interceptor[]{sessionInterceptor()});//拦截器
+        bean.setPlugins(new Interceptor[]{sessionInterceptor()});//只在local注入拦截器，remote一般是正式环境
         bean.setDataSource(dataSource);
         return bean.getObject();
     }
