@@ -8,6 +8,8 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -21,7 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@RequestScope
+//@RequestScope
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SourceCodeDaoImpl implements SourceCodeDao {
 
 

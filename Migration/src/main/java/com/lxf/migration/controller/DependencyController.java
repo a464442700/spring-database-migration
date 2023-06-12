@@ -6,14 +6,12 @@ import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.service.BFS;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,10 +21,9 @@ import java.util.Stack;
 public class DependencyController {
     @Autowired
     private BFS bfs;
+
     @Autowired
-    private BFS bfs1;
-    @Autowired
-    private BFS bfs2;
+    private BFS RemoteBfs;
     @Autowired
     private SourceCode sourceCode;
     private Stack<Node> stack;
@@ -153,18 +150,17 @@ public class DependencyController {
 
         var node1 = new Node(owner1, objectName1, objectType1);
         var node2 = new Node(owner2, objectName2, objectType2);
-     //   var bfs1 = new BFS();
-      //  var bfs2 = new BFS();
-        bfs1.setDataSource(dataSource1);
-        bfs1.setStartNode(node1);
-        bfs1.setDisplaySourceCode(true);
 
-        bfs2.setDataSource(dataSource2);
-        bfs2.setStartNode(node2);
-        bfs2.setDisplaySourceCode(true);
+        bfs.setDataSource(dataSource1);
+        bfs.setStartNode(node1);
+        bfs.setDisplaySourceCode(true);
 
-        Thread thread1 = new Thread(bfs1);
-        Thread thread2 = new Thread(bfs2);
+        RemoteBfs.setDataSource(dataSource2);
+        RemoteBfs.setStartNode(node2);
+        RemoteBfs.setDisplaySourceCode(true);
+
+        Thread thread1 = new Thread(bfs);
+        Thread thread2 = new Thread(RemoteBfs);
         thread1.start();
         thread2.start();
 
@@ -176,9 +172,9 @@ public class DependencyController {
             e.printStackTrace();
         }
 
-        List<Node> localNodes = bfs1.getStack();
-        List<Node> RemoteNodes = bfs2.getStack();
-        File file = sourceCode.getCompareFile(localNodes, RemoteNodes);
+        List<Node> localNodes = bfs.getStack();
+        List<Node> RemoteNodes = RemoteBfs.getStack();
+       File file = sourceCode.getCompareFile(localNodes, RemoteNodes);
 
 
         InputStreamResource isr = file.getFileStream();
@@ -192,6 +188,14 @@ public class DependencyController {
 
 
     }
+
+
+
+    //mvc
+
+
+
+
 
 
 }

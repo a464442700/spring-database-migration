@@ -4,6 +4,7 @@ package com.lxf.migration.service;
 import com.lxf.migration.algorithm.AdjacencyListGraph;
 import com.lxf.migration.dao.impl.DependenciesDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
+import com.lxf.migration.pojo.DataSource;
 import com.lxf.migration.pojo.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -17,7 +18,8 @@ import java.util.*;
 
 @Service
 //@RequestScope
-@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+//@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class BFS implements Runnable  {
     public SourceCodeDaoImpl getSourceCodeDaoImpl() {
         return s;
@@ -152,6 +154,21 @@ public class BFS implements Runnable  {
     public static void main(String[] args) {
 
     }
+//mvc代码
+
+//    public   List<DataSource> getDataSources(){
+//        List<DataSource> dataSources =new ArrayList<DataSource>();
+//        DataSource dataSource=new DataSource();
+//        dataSource.sourceName=d.getDatabase();
+//
+//        dataSources.add(dataSource);
+//
+//        return  dataSources;
+//    }
+
+    public String getDataBase(){
+        return d.getDatabase();
+    }
 
     @Override
     public void run() {
@@ -160,6 +177,7 @@ public class BFS implements Runnable  {
 }
 
 //react-force-graph
-//图可视化框架，本项目未采用
+//图可视化框架，本项目未采用,前后端分离项目个人开发花时间
+//DependencyController是符合前后端分离的
 //https://potoyang.gitbook.io/spring-in-action-v5/
 //在线电子书

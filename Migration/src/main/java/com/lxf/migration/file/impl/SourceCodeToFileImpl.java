@@ -4,6 +4,8 @@ import com.lxf.migration.file.SourceCodeToFile;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.annotation.RequestScope;
 
 @Component
-@RequestScope
+//@RequestScope
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SourceCodeToFileImpl implements SourceCodeToFile {
     public final Date date = new Date();
     public final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");

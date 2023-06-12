@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>home page</title>
+</head>
+<body>
+<h1>Home Page</h1>
+
+<form>
+    <label for="dataSourceSelect">数据源:</label>
+    <select id="dataSourceSelect" name="dataSource">
+        <option th:each="p : ${dataSources}"
+                th:value="${p.sourceName}"
+                th:text="${p.sourceName}" />
+    </select>
+</form>
+
+</body>
+</html>
