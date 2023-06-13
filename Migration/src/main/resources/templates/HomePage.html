@@ -4,17 +4,44 @@
     <meta charset="UTF-8">
     <title>home page</title>
 </head>
-<body>
-<h1>Home Page</h1>
 
-<form>
-    <label for="dataSourceSelect">数据源:</label>
-    <select id="dataSourceSelect" name="dataSource">
-        <option th:each="p : ${dataSources}"
-                th:value="${p.sourceName}"
-                th:text="${p.sourceName}" />
-    </select>
+<body>
+<h1>主页</h1>
+
+
+<form action="downloadFile" method="post">
+    数据源：<select id="dataSourceSelect" name="dataSource">
+    <option th:each="p : ${dataSources}"
+            th:text="${p.name}"
+            th:value="${p.value}"/>
+</select><br/>
+    用户: <input type="text" name="owner"><br/>
+
+
+    对象类型: <input type="text" name="objectType"><br/>
+    对象名: <input type="text" name="objectName"><br/>
+    <button type="submit" name="buttonAction" value="downloadFile" >下载源码</button>
+
 </form>
+
+<form action="downloadCompareFile" method="post">
+    本地数据源：<select id="dataSourceSelect" name="dataSource">
+    <option th:each="p : ${dataSources}"
+            th:text="${p.name}"
+            th:value="${p.value}"/>
+</select><br/>
+    远程数据源：<select id="dataSourceSelect" name="remoteDataSource">
+    <option th:each="p : ${remoteDataSource}"
+            th:text="${p.name}"
+            th:value="${p.value}"/>
+</select><br/>
+    用户: <input type="text" name="owner"><br/>
+    对象类型: <input type="text" name="objectType"><br/>
+    对象名: <input type="text" name="objectName"><br/>
+    <button type="submit" name="buttonAction" value="downloadCompareFile" >下载源码</button>
+
+</form>
+
 
 </body>
 </html>

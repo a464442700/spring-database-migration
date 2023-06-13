@@ -170,6 +170,8 @@ public class BFS implements Runnable  {
         return d.getDatabase();
     }
 
+
+
     @Override
     public void run() {
         Traverse();

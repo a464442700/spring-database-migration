@@ -88,6 +88,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
         return database;
     }
 
+
     private void setIdentifier(SqlSession sqlSession) {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("clientID", "mybatis");
