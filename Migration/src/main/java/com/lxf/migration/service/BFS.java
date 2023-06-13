@@ -99,6 +99,7 @@ public class BFS implements Runnable  {
 
     private void setSourceCode(Node node) {
         //   SourceCodeDaoImpl s=new SourceCodeDaoImpl();
+
         s.getSourcode(node);
         s.getSourcodeHash(node);
     }

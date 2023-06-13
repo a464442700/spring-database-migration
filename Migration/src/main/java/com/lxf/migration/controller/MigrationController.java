@@ -87,7 +87,7 @@ public class MigrationController {
         System.out.println(dataSource);
         System.out.println(remoteDataSource);
         var node1 = new Node(owner, objectName, objectType);
-        var node2 = node1;
+        var node2 = new Node(owner, objectName, objectType);;
 
         localBfs.setDataSource(dataSource);
         localBfs.setStartNode(node1);
