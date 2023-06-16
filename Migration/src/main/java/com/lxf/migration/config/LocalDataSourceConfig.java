@@ -12,8 +12,10 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -79,29 +81,52 @@ import javax.sql.DataSource;
 
 
 @Configuration
+
 @MapperScan(basePackages = "com.lxf.migration.mapper", sqlSessionTemplateRef = "localSqlSessionTemplate")
 public class LocalDataSourceConfig {
     @Autowired
     private org.springframework.core.env.Environment env;
+
+//    @Autowired
+//    private DataSourceProperty localDataSourceProperty;
 
     @Bean
     public SessionInterceptor sessionInterceptor() {
         return new SessionInterceptor();
     }
 
+//    @Autowired
+//    public DataSourceContextHolder dataSourceContextHolder;
+
     // 创建数据源
+//    @RefreshScope
+//    @Lazy
     @Bean(name = "localDataSource")
-    public DataSource localDataSource() {
-        //DruidDataSource dataSource = new DruidDataSource();
+    public DataSource localDataSource(
+
+
+    ) {
+        //动态注册数据源，但是@RefreshScope没有生效，暂时只能使用配置文件获取
+//        DataSourceWrapper dataSourceWrapper= dataSourceContextHolder.getCurrentDataSourceWrapper();
+//        DataSourceProperty localDataSourceProperty=dataSourceWrapper.getLocalDataSource();
+//        String driver = localDataSourceProperty.getDriver();
+//        String username = localDataSourceProperty.getUsername();
+//        String password = localDataSourceProperty.getPassword();
+//        String url = localDataSourceProperty.getUrl();
+//        PooledDataSource dataSource = new PooledDataSource(
+//                driver, url, username, password
+//
+//        );
         PooledDataSource dataSource = new PooledDataSource();
         String driver = env.getProperty("spring.datasource.local.driver-class-name");
         String userName = env.getProperty("spring.datasource.local.username");
         String passWord = env.getProperty("spring.datasource.local.password");
         String url = env.getProperty("spring.datasource.local.url");
         dataSource.setDriver(driver);
-        dataSource.setUrl( url);
+        dataSource.setUrl(url);
         dataSource.setUsername(userName);
-        dataSource.setPassword( passWord);
+        dataSource.setPassword(passWord);
+        //  System.out.println("注册datasource成功");
         return dataSource;
     }
 
@@ -128,8 +153,8 @@ public class LocalDataSourceConfig {
     @Bean(name = "localMapper")
     @Primary
     public BFSMapper localMapper(@Qualifier("localSqlSessionTemplate") SqlSessionTemplate localSqlSessionTemplate) throws Exception {
-
-        return  localSqlSessionTemplate.getMapper(BFSMapper.class);
+//System.out.println("注册mapper成功");
+        return localSqlSessionTemplate.getMapper(BFSMapper.class);
     }
 
 

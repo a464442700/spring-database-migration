@@ -4,7 +4,7 @@ package com.lxf.migration.service;
 import com.lxf.migration.algorithm.AdjacencyListGraph;
 import com.lxf.migration.dao.impl.DependenciesDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
-import com.lxf.migration.pojo.DataSource;
+import com.lxf.migration.pojo.DataSourceBox;
 import com.lxf.migration.pojo.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -122,6 +122,7 @@ public class BFS implements Runnable  {
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
         this.stack=new Stack<Node>();
+        setDisplaySourceCode(false);
     }
 
     private ArrayList<Node> getNeighbors(Node node) {

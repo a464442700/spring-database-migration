@@ -1,9 +1,10 @@
 package com.lxf.migration.model;
 
-import com.lxf.migration.pojo.DataSource;
+import com.lxf.migration.pojo.DataSourceBox;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 public class Migration {
-    public List<DataSource> dataSources;
+    public List<DataSourceBox> dataSources;
 }

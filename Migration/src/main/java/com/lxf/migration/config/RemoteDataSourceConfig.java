@@ -8,8 +8,10 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
@@ -17,12 +19,14 @@ import javax.sql.DataSource;
 
 
 @Configuration
+
 @MapperScan(basePackages = "com.lxf.migration.mapper", sqlSessionTemplateRef = "remoteSqlSessionTemplate")
 public class RemoteDataSourceConfig {
     @Autowired
     private org.springframework.core.env.Environment env;
     // 创建数据源
     @Bean(name = "remoteDataSource")
+    @RefreshScope
     public DataSource remoteDataSource() {
         //DruidDataSource dataSource = new DruidDataSource();
         PooledDataSource dataSource = new PooledDataSource();

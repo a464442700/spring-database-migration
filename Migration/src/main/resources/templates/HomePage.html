@@ -31,7 +31,7 @@
             th:value="${p.value}"/>
 </select><br/>
     远程数据源：<select id="dataSourceSelect" name="remoteDataSource">
-    <option th:each="p : ${remoteDataSource}"
+    <option th:each="p : ${dataSources}"
             th:text="${p.name}"
             th:value="${p.value}"/>
 </select><br/>

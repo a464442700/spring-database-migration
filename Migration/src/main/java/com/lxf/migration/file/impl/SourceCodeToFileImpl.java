@@ -144,8 +144,8 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
 
     }
     public List<Node> getCompareNode(List<Node> localNodes, List<Node> remoteNodes) {
-        System.out.println("localNodes:" + localNodes);
-        System.out.println("remoteNodes:" + remoteNodes);
+      //  System.out.println("localNodes:" + localNodes);
+       // System.out.println("remoteNodes:" + remoteNodes);
         List<Node> result = new ArrayList<Node>();
         //add
         List<Node> AddResult = localNodes.stream()

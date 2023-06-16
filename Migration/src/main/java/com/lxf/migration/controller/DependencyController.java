@@ -1,5 +1,6 @@
 package com.lxf.migration.controller;
 
+import com.lxf.migration.algorithm.AdjacencyListGraph;
 import com.lxf.migration.file.SourceCode;
 import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
 import com.lxf.migration.pojo.File;
@@ -34,9 +35,10 @@ public class DependencyController {
             @RequestHeader(required = false) String requestId,
             @RequestBody Node node
     ) {
+        bfs.init();
         bfs.setDataSource(node.dataSource);
         bfs.setStartNode(node);
-        //    bfs.setDisplaySourceCode(true);
+        bfs.setDisplaySourceCode(false);
         bfs.Traverse();
         stack = bfs.getStack();
 
@@ -53,7 +55,7 @@ public class DependencyController {
             @RequestBody Node node
 
     ) {
-
+        bfs.init();
         bfs.setDataSource(node.dataSource);
         bfs.setStartNode(node);
 
@@ -63,6 +65,26 @@ public class DependencyController {
 
         JgraphtGraphPictureImpl jgraphtGraphPicture = new JgraphtGraphPictureImpl();
         return jgraphtGraphPicture.GetBinaryPicture(getGraph);
+    }
+
+    @PostMapping(value = "/allDependenciesGraphCode")
+    @ResponseBody
+    public ResponseEntity<AdjacencyListGraph<Node>> allDependenciesGraphCode(
+            @RequestBody Node node
+
+    ) {
+        bfs.init();
+        bfs.setDataSource(node.dataSource);
+        bfs.setStartNode(node);
+        bfs.setDisplaySourceCode(false);
+
+        bfs.Traverse();
+        AdjacencyListGraph<Node> graph = bfs.getGraph();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(graph);
+
     }
 
 
@@ -76,6 +98,7 @@ public class DependencyController {
             @RequestParam String dataSource
     ) {
         var node = new Node(owner, objectName, objectType);
+        bfs.init();
         bfs.setDataSource(dataSource);
         bfs.setStartNode(node);
         bfs.setDisplaySourceCode(false);
@@ -150,11 +173,11 @@ public class DependencyController {
 
         var node1 = new Node(owner1, objectName1, objectType1);
         var node2 = new Node(owner2, objectName2, objectType2);
-
+        bfs.init();
         bfs.setDataSource(dataSource1);
         bfs.setStartNode(node1);
         bfs.setDisplaySourceCode(true);
-
+        RemoteBfs.init();
         RemoteBfs.setDataSource(dataSource2);
         RemoteBfs.setStartNode(node2);
         RemoteBfs.setDisplaySourceCode(true);
@@ -174,7 +197,7 @@ public class DependencyController {
 
         List<Node> localNodes = bfs.getStack();
         List<Node> RemoteNodes = RemoteBfs.getStack();
-       File file = sourceCode.getCompareFile(localNodes, RemoteNodes);
+        File file = sourceCode.getCompareFile(localNodes, RemoteNodes);
 
 
         InputStreamResource isr = file.getFileStream();
@@ -190,12 +213,7 @@ public class DependencyController {
     }
 
 
-
     //mvc
-
-
-
-
 
 
 }

@@ -1,11 +1,23 @@
 package com.lxf.migration.controller;
 
+import com.lxf.migration.config.DataSourceContextHolder;
+import com.lxf.migration.config.DataSourceProperty;
+import com.lxf.migration.config.DataSourceWrapper;
+import com.lxf.migration.config.LocalDataSourceConfig;
 import com.lxf.migration.file.SourceCode;
-import com.lxf.migration.pojo.DataSource;
+
+import com.lxf.migration.pojo.DataSourceBox;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.service.BFS;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +25,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+//@RefreshScope
 public class MigrationController {
     @Autowired
     private BFS localBfs;
@@ -27,16 +41,25 @@ public class MigrationController {
     @Autowired
     private SourceCode sourceCode;
 
+//    @Autowired
+//    public DataSourceContextHolder dataSourceContextHolder;
+
+
+//    @Autowired
+///  @Lazy
+//    @Qualifier(value = "localDataSource")
+//    public DataSource localDataSource;
+
     @GetMapping("/")
     public String HomePage(Model model) {
-        List<DataSource> dataSources = new ArrayList<DataSource>();
+        List<DataSourceBox> dataSources = new ArrayList<DataSourceBox>();
         localBfs.setDataSource("local");
         remoteBfs.setDataSource("remote");
         String database1 = localBfs.getDataBase();
         String database2 = remoteBfs.getDataBase();
 
-        dataSources.add(new DataSource(database1, "local"));
-        dataSources.add(new DataSource(database2, "remote"));
+        dataSources.add(new DataSourceBox(database1, "local"));
+        dataSources.add(new DataSourceBox(database2, "remote"));
 
 
         model.addAttribute("dataSources", dataSources);
@@ -84,15 +107,16 @@ public class MigrationController {
             @RequestParam("remoteDataSource") String remoteDataSource
 
     ) throws IOException {
-        System.out.println(dataSource);
-        System.out.println(remoteDataSource);
+     //   System.out.println(dataSource);
+     //   System.out.println(remoteDataSource);
         var node1 = new Node(owner, objectName, objectType);
-        var node2 = new Node(owner, objectName, objectType);;
+        var node2 = new Node(owner, objectName, objectType);
 
+        localBfs.init();
         localBfs.setDataSource(dataSource);
         localBfs.setStartNode(node1);
         localBfs.setDisplaySourceCode(true);
-
+        remoteBfs.init();
         remoteBfs.setDataSource(remoteDataSource);
         remoteBfs.setStartNode(node2);
         remoteBfs.setDisplaySourceCode(true);
@@ -125,6 +149,33 @@ public class MigrationController {
                 .body(isr);
 
     }
-
-
+//    @Autowired
+//    private ApplicationContext context;
+//    @PostMapping("/register")
+//    @ResponseBody
+//    @RefreshScope
+//    public String register(
+//
+//
+//    ) throws IOException {
+//
+//        DataSourceProperty localDataSource = new DataSourceProperty(
+//                "oracle.jdbc.OracleDriver",
+//                "jdbc:oracle:thin:@127.0.0.1:1521:DUPDB",
+//                "appsquery",
+//                "appsquery");
+//        DataSourceWrapper dataSourceWrapper =new DataSourceWrapper();
+//        dataSourceWrapper.setLocalDataSource(localDataSource);
+//        dataSourceContextHolder.setCurrentDataSourceWrapper(dataSourceWrapper);
+//
+//        ConfigurableApplicationContext configurableContext = (ConfigurableApplicationContext) context;
+//        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) configurableContext.getBeanFactory();
+//        if (registry.containsBeanDefinition("localDataSource")) {
+//            registry.removeBeanDefinition("localDataSource");
+//        }
+//        registry.registerBeanDefinition("localDataSource", new RootBeanDefinition(LocalDataSourceConfig.class));
+//
+//
+//        return "null";
+//    }
 }

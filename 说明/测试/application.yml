@@ -1,0 +1,18 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    local:
+      driver-class-name: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
+      username: appsquery
+      password: appsquery
+    remote:
+      driver-class-name: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:@//127.0.0.1:1523/XEPDB1
+      username: apps
+      password: apps
+
+mybatis:
+  mapper-locations: classpath:/com/lxf/migration/mapper/*.xml
+  type-aliases-package: com.lxf.migration.pojo
