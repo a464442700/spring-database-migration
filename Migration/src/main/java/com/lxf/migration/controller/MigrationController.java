@@ -1,9 +1,5 @@
 package com.lxf.migration.controller;
 
-import com.lxf.migration.config.DataSourceContextHolder;
-import com.lxf.migration.config.DataSourceProperty;
-import com.lxf.migration.config.DataSourceWrapper;
-import com.lxf.migration.config.LocalDataSourceConfig;
 import com.lxf.migration.file.SourceCode;
 
 import com.lxf.migration.pojo.DataSourceBox;
@@ -11,13 +7,6 @@ import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.service.BFS;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
