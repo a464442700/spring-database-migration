@@ -58,9 +58,9 @@ public class MigrationController {
     @PostMapping("/downloadFile")
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadAllDependenciesFile(
-            @RequestParam String owner,
-            @RequestParam String objectName,
-            @RequestParam String objectType,
+            @RequestParam("owner") String owner,
+            @RequestParam("objectName") String objectName,
+            @RequestParam("objectType") String objectType,
             @RequestParam("dataSource") String dataSource
 
     ) throws IOException {
@@ -69,8 +69,9 @@ public class MigrationController {
         localBfs.init();//清空所有栈，map，起点，数据源等信息
         localBfs.setDataSource(dataSource);//设置数据源
         localBfs.setStartNode(node);//设置广度优先搜索的起点
-        localBfs.setDisplaySourceCode(true);//搜索源码
+        //localBfs.setDisplaySourceCode(false);//搜索源码
         localBfs.Traverse();//开始搜索
+        //全部搜索完毕再次下载
         File file = sourceCode.getFile(localBfs.getStack());//获取文件
 
 
@@ -137,33 +138,5 @@ public class MigrationController {
                 .body(isr);
 
     }
-//    @Autowired
-//    private ApplicationContext context;
-//    @PostMapping("/register")
-//    @ResponseBody
-//    @RefreshScope
-//    public String register(
-//
-//
-//    ) throws IOException {
-//
-//        DataSourceProperty localDataSource = new DataSourceProperty(
-//                "oracle.jdbc.OracleDriver",
-//                "jdbc:oracle:thin:@127.0.0.1:1521:DUPDB",
-//                "appsquery",
-//                "appsquery");
-//        DataSourceWrapper dataSourceWrapper =new DataSourceWrapper();
-//        dataSourceWrapper.setLocalDataSource(localDataSource);
-//        dataSourceContextHolder.setCurrentDataSourceWrapper(dataSourceWrapper);
-//
-//        ConfigurableApplicationContext configurableContext = (ConfigurableApplicationContext) context;
-//        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) configurableContext.getBeanFactory();
-//        if (registry.containsBeanDefinition("localDataSource")) {
-//            registry.removeBeanDefinition("localDataSource");
-//        }
-//        registry.registerBeanDefinition("localDataSource", new RootBeanDefinition(LocalDataSourceConfig.class));
-//
-//
-//        return "null";
-//    }
+
 }

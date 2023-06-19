@@ -1,4 +1,4 @@
-package com.lxf.migration.config;
+package com.lxf.migration.config.datasource;
 
 import com.lxf.migration.mapper.BFSMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;

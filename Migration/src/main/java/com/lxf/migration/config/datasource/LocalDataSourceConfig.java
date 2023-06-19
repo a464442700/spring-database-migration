@@ -1,4 +1,4 @@
-package com.lxf.migration.config;
+package com.lxf.migration.config.datasource;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.lxf.migration.dao.impl.SessionInterceptor;
