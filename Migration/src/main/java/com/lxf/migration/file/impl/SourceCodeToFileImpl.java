@@ -121,6 +121,7 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
         File file = new File();
         if (nodes.isEmpty()) {
             return file;
+
         }
 
       //  dealNodes(nodes);

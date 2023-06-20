@@ -4,23 +4,28 @@ package com.lxf.migration.service;
 import com.lxf.migration.algorithm.AdjacencyListGraph;
 import com.lxf.migration.dao.impl.DependenciesDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
-import com.lxf.migration.pojo.DataSourceBox;
+import com.lxf.migration.dao.impl.SourceCodeDaoThread;
 import com.lxf.migration.pojo.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 //@RequestScope
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 //@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class BFS implements Runnable  {
+public class BFS implements Runnable {
+//    @Autowired
+//    private SourceCodeDaoThread sourceCodeDaoThread;
+
+
+    private ExecutorService threadPool;
+
     public SourceCodeDaoImpl getSourceCodeDaoImpl() {
         return s;
     }
@@ -36,8 +41,8 @@ public class BFS implements Runnable  {
 
     private String dataSource;
 
-    public void setDataSource(String dataSource){
-        this.dataSource=dataSource;
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 
     private Boolean displaySourceCode;
@@ -55,7 +60,7 @@ public class BFS implements Runnable  {
         this.queue = new LinkedList<Node>();
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
-
+      this.threadPool = Executors.newFixedThreadPool(20);
     }
 
     public BFS() {
@@ -67,7 +72,7 @@ public class BFS implements Runnable  {
 
     public void setStartNode(Node startNode) {
         this.startNode = startNode;
-     this.displaySourceCode=startNode.getShowSourceCode();
+        this.displaySourceCode = startNode.getShowSourceCode();
     }
 
     private AdjacencyListGraph<Node> graph;
@@ -83,7 +88,7 @@ public class BFS implements Runnable  {
         return this.set;
     }
 
-    private Stack<Node> stack ;//访问一个节点入栈，这样从栈弹出顺序就是编译顺序
+    private Stack<Node> stack;//访问一个节点入栈，这样从栈弹出顺序就是编译顺序
 
 
     //该节点是否被访问
@@ -98,10 +103,11 @@ public class BFS implements Runnable  {
     }
 
     private void setSourceCode(Node node) {
-        //   SourceCodeDaoImpl s=new SourceCodeDaoImpl();
+        SourceCodeDaoThread sourceCodeDaoThread=new SourceCodeDaoThread(node,s);
 
-        s.getSourcode(node);
-        s.getSourcodeHash(node);
+        this.threadPool.execute(sourceCodeDaoThread);
+//        s.getSourcode(node);
+//        s.getSourcodeHash(node);
     }
 
     //设置访问标签
@@ -114,14 +120,27 @@ public class BFS implements Runnable  {
             this.setSourceCode(node);
         }
     }
-
+    private void shutdownPool(){
+        if (this.displaySourceCode) {
+            threadPool.shutdown();
+            // System.out.println("关闭线程池");
+            while (!threadPool.isTerminated()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     //初始化
     public void init() {
 
         this.queue = new LinkedList<Node>();
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
-        this.stack=new Stack<Node>();
+        this.stack = new Stack<Node>();
+        this.threadPool = Executors.newFixedThreadPool(20);
         setDisplaySourceCode(false);
     }
 
@@ -150,7 +169,9 @@ public class BFS implements Runnable  {
 
 
         }
-
+        //等到所有多线程获取源码执行完毕，再往下进行
+        shutdownPool();
+       System.out.println(this.stack);
     }
 
     public static void main(String[] args) {
@@ -168,10 +189,9 @@ public class BFS implements Runnable  {
 //        return  dataSources;
 //    }
 
-    public String getDataBase(){
+    public String getDataBase() {
         return d.getDatabase();
     }
-
 
 
     @Override

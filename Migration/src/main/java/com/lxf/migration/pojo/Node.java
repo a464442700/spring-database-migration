@@ -111,6 +111,7 @@ public class Node {
                 ", dataSource='" + dataSource + '\'' +
                 ", sourceCodeHash='" + sourceCodeHash + '\'' +
                 ", maxLevel=" + maxLevel +
+                ", sourceCode=" +   (sourceCode != null)+
                 '}';
     }
 
