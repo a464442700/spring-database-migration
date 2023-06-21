@@ -69,7 +69,7 @@ public class MigrationController {
         localBfs.init();//清空所有栈，map，起点，数据源等信息
         localBfs.setDataSource(dataSource);//设置数据源
         localBfs.setStartNode(node);//设置广度优先搜索的起点
-        //localBfs.setDisplaySourceCode(false);//搜索源码
+        localBfs.setDisplaySourceCode(true);//搜索源码
         localBfs.Traverse();//开始搜索
         //全部搜索完毕再次下载
         File file = sourceCode.getFile(localBfs.getStack());//获取文件

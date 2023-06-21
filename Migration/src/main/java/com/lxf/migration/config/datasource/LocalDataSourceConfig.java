@@ -130,11 +130,12 @@ public class LocalDataSourceConfig {
         dataSource.setPoolMaximumActiveConnections(30);
         dataSource.setPoolMaximumIdleConnections(10);
         dataSource.setPoolMaximumCheckoutTime(30000);
-        dataSource.setPoolTimeToWait(30000);
-        dataSource.setPoolPingEnabled(true);
+        dataSource.setPoolTimeToWait(30000);//重试获取连接之前等待的时间
+        dataSource.setPoolPingEnabled(true);//确定是否应使用 ping 查询。
         dataSource.setPoolPingQuery("SELECT 1 FROM DUAL");
-        dataSource.setPoolPingConnectionsNotUsedFor(30000);
+        dataSource.setPoolPingConnectionsNotUsedFor(30000);//如果在30秒内未使用连接，请 ping 数据库以确保连接仍在 好。
         dataSource.setDefaultAutoCommit(false);
+        
         //  System.out.println("注册datasource成功");
         return dataSource;
     }
