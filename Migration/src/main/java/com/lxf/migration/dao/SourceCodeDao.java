@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface SourceCodeDao {
     public void getSourcode(Node node) throws Exception;
     public void getSourcodeHash(Node node) throws Exception;
+    public void getSourcodeHashSHA256(Node node) throws Exception;
 }

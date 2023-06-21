@@ -60,7 +60,7 @@ public class BFS implements Runnable {
         this.queue = new LinkedList<Node>();
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
-      this.threadPool = Executors.newFixedThreadPool(20);
+      this.threadPool = Executors.newFixedThreadPool(10);
     }
 
     public BFS() {

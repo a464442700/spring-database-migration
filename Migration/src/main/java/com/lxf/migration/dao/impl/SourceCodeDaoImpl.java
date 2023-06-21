@@ -1,6 +1,7 @@
 package com.lxf.migration.dao.impl;
 
 
+import com.lxf.migration.common.Hash;
 import com.lxf.migration.dao.SourceCodeDao;
 import com.lxf.migration.mapper.BFSMapper;
 import com.lxf.migration.pojo.Node;
@@ -103,6 +104,7 @@ public class SourceCodeDaoImpl implements SourceCodeDao  {
 
     }
 
+
     public void getSourcodeHash(Node node) {
 
         String resource = "mybatis-config.xml";
@@ -132,6 +134,11 @@ public class SourceCodeDaoImpl implements SourceCodeDao  {
 
     }
 
+    @Override
+    public void getSourcodeHashSHA256(Node node) throws Exception {
+     String  sourceCodeHash= Hash.getSha256(node.getSourceCode());
+        node.setSourceCodeHash(sourceCodeHash);
+    }
 
 
 }

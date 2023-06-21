@@ -128,7 +128,7 @@ public class LocalDataSourceConfig {
         dataSource.setUsername(userName);
         dataSource.setPassword(passWord);
         dataSource.setPoolMaximumActiveConnections(30);
-        dataSource.setPoolMaximumIdleConnections(5);
+        dataSource.setPoolMaximumIdleConnections(10);
         dataSource.setPoolMaximumCheckoutTime(30000);
         dataSource.setPoolTimeToWait(30000);
         dataSource.setPoolPingEnabled(true);
