@@ -118,6 +118,7 @@ public class LocalDataSourceConfig {
 //
 //        );
         PooledDataSource dataSource = new PooledDataSource();
+
         String driver = env.getProperty("spring.datasource.local.driver-class-name");
         String userName = env.getProperty("spring.datasource.local.username");
         String passWord = env.getProperty("spring.datasource.local.password");
@@ -126,6 +127,14 @@ public class LocalDataSourceConfig {
         dataSource.setUrl(url);
         dataSource.setUsername(userName);
         dataSource.setPassword(passWord);
+        dataSource.setPoolMaximumActiveConnections(30);
+        dataSource.setPoolMaximumIdleConnections(5);
+        dataSource.setPoolMaximumCheckoutTime(30000);
+        dataSource.setPoolTimeToWait(30000);
+        dataSource.setPoolPingEnabled(true);
+        dataSource.setPoolPingQuery("SELECT 1 FROM DUAL");
+        dataSource.setPoolPingConnectionsNotUsedFor(30000);
+        dataSource.setDefaultAutoCommit(false);
         //  System.out.println("注册datasource成功");
         return dataSource;
     }

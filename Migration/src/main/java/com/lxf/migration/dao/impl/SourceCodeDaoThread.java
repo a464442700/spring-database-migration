@@ -40,7 +40,7 @@ public class SourceCodeDaoThread implements Runnable {
 //            System.out.println("get node:"+node.objectName);
             sourceCodeDaoImpl.getSourcode(node);
             sourceCodeDaoImpl.getSourcodeHash(node);
-            System.out.println(node.objectName+":"+node.sourceCodeHash);
+         
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -123,11 +123,12 @@ public class BFS implements Runnable {
     private void shutdownPool(){
         if (this.displaySourceCode) {
             threadPool.shutdown();
-            // System.out.println("关闭线程池");
+        //   System.out.println("关闭线程池");
             while (!threadPool.isTerminated()) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
+
                     e.printStackTrace();
                 }
             }
@@ -171,7 +172,7 @@ public class BFS implements Runnable {
         }
         //等到所有多线程获取源码执行完毕，再往下进行
         shutdownPool();
-       System.out.println(this.stack);
+
     }
 
     public static void main(String[] args) {

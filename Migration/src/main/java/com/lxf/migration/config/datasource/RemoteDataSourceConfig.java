@@ -38,6 +38,14 @@ public class RemoteDataSourceConfig {
         dataSource.setUrl( url);
         dataSource.setUsername(userName);
         dataSource.setPassword( passWord);
+        dataSource.setPoolMaximumActiveConnections(30);
+        dataSource.setPoolMaximumIdleConnections(5);
+        dataSource.setPoolMaximumCheckoutTime(30000);
+        dataSource.setPoolTimeToWait(30000);
+        dataSource.setPoolPingEnabled(true);
+        dataSource.setPoolPingQuery("SELECT 1 FROM DUAL");
+        dataSource.setPoolPingConnectionsNotUsedFor(30000);
+        dataSource.setDefaultAutoCommit(false);
         return dataSource;
     }
 

@@ -88,6 +88,8 @@ public class SourceCodeDaoImpl implements SourceCodeDao  {
         Clob sourceClob = (Clob) dbaobjMap.get("sourceCode");
         try {
             String sourCode = convertClobToString(sourceClob);
+
+
             if (node.objectType.equals("PACKAGE")) {
                 sourCode = dealPackageCode(sourCode);
 
@@ -95,7 +97,8 @@ public class SourceCodeDaoImpl implements SourceCodeDao  {
             node.setSourceCode(sourCode);
 
         } catch (Exception e) {
-
+            System.out.println("获取sourceCode异常:"+node.objectName);
+            e.printStackTrace();
         }
 
     }
