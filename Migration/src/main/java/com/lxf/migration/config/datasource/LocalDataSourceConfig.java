@@ -1,6 +1,6 @@
 package com.lxf.migration.config.datasource;
 
-import com.alibaba.druid.pool.DruidDataSource;
+
 import com.lxf.migration.dao.impl.SessionInterceptor;
 import com.lxf.migration.mapper.BFSMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
@@ -128,7 +128,7 @@ public class LocalDataSourceConfig {
         dataSource.setUsername(userName);
         dataSource.setPassword(passWord);
         dataSource.setPoolMaximumActiveConnections(30);
-        dataSource.setPoolMaximumIdleConnections(10);
+        dataSource.setPoolMaximumIdleConnections(20);
         dataSource.setPoolMaximumCheckoutTime(30000);
         dataSource.setPoolTimeToWait(30000);//重试获取连接之前等待的时间
         dataSource.setPoolPingEnabled(true);//确定是否应使用 ping 查询。

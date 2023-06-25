@@ -18,6 +18,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+
+
+import oracle.sql.CLOB;
+
+
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -55,8 +60,10 @@ public class SourceCodeDaoImpl implements SourceCodeDao  {
         while ((line = br.readLine()) != null) {
             sb.append(line).append("\r\n");
         }
+        reader.close();
         return sb.toString();
     }
+
 
     private String dealPackageCode(String s) {
         String regex = "\r\n(?=CREATE OR REPLACE EDITIONABLE PACKAGE BODY)";
