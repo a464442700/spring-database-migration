@@ -6,11 +6,11 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.0.6</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.lxf</groupId>
     <artifactId>Migration</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Migration</name>
     <description>Migration</description>
     <properties>
@@ -43,17 +43,13 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>3.0.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba</groupId>-->
-<!--            <artifactId>druid</artifactId>-->
-<!--            <version>1.1.24</version>-->
-<!--        </dependency>-->
+        <!--Oracle支持GBK语言Start-->
         <dependency>
             <groupId>com.oracle.database.nls</groupId>
             <artifactId>orai18n</artifactId>
             <version>19.3.0.0</version>
         </dependency>
-
+        <!--Oracle支持GBK语言End-->
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc8</artifactId>
