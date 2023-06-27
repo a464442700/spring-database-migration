@@ -12,7 +12,13 @@ spring:
       url: jdbc:oracle:thin:@//127.0.0.1:1523/XEPDB1
       username: apps
       password: apps
+  resources:
+    static-locations=classpath:/static/**
 
 mybatis:
   mapper-locations: classpath:/com/lxf/migration/mapper/*.xml
   type-aliases-package: com.lxf.migration.pojo
+
+
+
+

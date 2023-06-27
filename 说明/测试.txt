@@ -1,0 +1,11 @@
+ALTER SESSION SET plscope_settings='IDENTIFIERS:ALL';
+ALTER package  apps.CUX_TEST_A COMPILE;
+ALTER package  apps.CUX_TEST_E COMPILE;
+ALTER package  apps.CUX_TEST_B COMPILE;
+
+SELECT dbms_metadata.get_dependent_ddl('PACKAGE BODY', 'CUX_TEST_A', 'APPS') FROM dual;
+SELECT *from   dba_identifiers di where di.object_name LIKE 'CUX_TEST_A%' AND DI.OBJECT_TYPE='PACKAGE BODY'
+
+SELECT * FROM DBA_ARGUMENTS D WHERE D.OWNER  IN ('APPS')
+ CUX_TEST_B.TEST;
+SELECT  * FROM sys.OBJ$ s where s.name ='TEST'

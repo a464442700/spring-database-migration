@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>home page</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+
+
 </head>
 
 <body>
+<script src="../static/layui/layui.js"></script>
 <h1>主页</h1>
 
 
@@ -20,8 +24,10 @@
 
     对象类型: <input type="text" name="objectType"><br/>
     对象名: <input type="text" name="objectName"><br/>
-    <button type="submit" name="buttonAction" value="downloadFile">下载源码</button>
-
+    <button class="layui-btn" type="submit" name="buttonAction" value="downloadFile">下载源码</button>
+    <div class="layui-btn-container">
+        <div class="layui-btn">默认按钮</div>
+    </div>
 </form>
 
 <form action="downloadCompareFile" method="post">
