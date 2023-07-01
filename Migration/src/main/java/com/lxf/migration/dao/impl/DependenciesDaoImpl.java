@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Service
 //@RequestScope
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -32,9 +33,11 @@ public class DependenciesDaoImpl implements DependenciesDao {
     //将静态注入改成动态注入
 
     private BFSMapper mapper;
+
     public void setMapper(BFSMapper mapper) {
         this.mapper = mapper;
     }
+
     private ArrayList<Node> getNodes(List<DbaObjects> allNeighbors, Node parentNode, String dependence_type) {
         ArrayList<Node> nodes = new ArrayList<Node>();
 
@@ -47,7 +50,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
         return nodes;
     }
 
-    private ArrayList<Node> getIndexes( Map dbaobjMap, Node parantNode) {
+    private ArrayList<Node> getIndexes(Map dbaobjMap, Node parantNode) {
 
         List<DbaObjects> Indexes = mapper.selectIndexes(dbaobjMap);
         return getNodes(Indexes, parantNode, "Indirect");
@@ -57,19 +60,19 @@ public class DependenciesDaoImpl implements DependenciesDao {
     private ArrayList<Node> getAllNeighborNode(Map dbaobjMap, Node parantNode) {
 
         List<DbaObjects> allDirectNeighbors = mapper.selecteDirectDependencies(dbaobjMap);
-       // System.out.println("getAllNeighborNode执行成功");
+        // System.out.println("getAllNeighborNode执行成功");
         return getNodes(allDirectNeighbors, parantNode, "Direct");
 
     }
 
-    private ArrayList<Node> getDblinks( Map dbaobjMap, Node parantNode) {
+    private ArrayList<Node> getDblinks(Map dbaobjMap, Node parantNode) {
 
         List<DbaObjects> dblinks = mapper.selectDBlink(dbaobjMap);
         return getNodes(dblinks, parantNode, "Direct");
 
     }
 
-    private ArrayList<Node> getTriggers( Map dbaobjMap, Node parantNode) {
+    private ArrayList<Node> getTriggers(Map dbaobjMap, Node parantNode) {
 
         List<DbaObjects> triggers = mapper.selectTrigger(dbaobjMap);
         return getNodes(triggers, parantNode, "Indirect");
@@ -97,8 +100,6 @@ public class DependenciesDaoImpl implements DependenciesDao {
     }
 
 
-
-
     private void setAllNodeDatabase(List<Node> nodes, String database) {
 
 
@@ -112,41 +113,34 @@ public class DependenciesDaoImpl implements DependenciesDao {
 
     @Override
     public ArrayList<Node> findAllNeighborNode(Node node) {
-       // String resource = "mybatis-config.xml";
+
 
         Map dbaobjMap = new HashMap();
         dbaobjMap.put("owner", node.owner);
         dbaobjMap.put("objectType", node.objectType);
         dbaobjMap.put("objectName", node.objectName);
 
+      //获取所有的边节点，存入allNeighborNode
+        ArrayList<Node> allNeighborNode = new ArrayList<Node>();
 
 
-//            InputStream inputStream = Resources.getResourceAsStream(resource);
-//            SqlSessionFactory sqlSessionFactory = (new SqlSessionFactoryBuilder()).build(inputStream);
-//            SqlSession sqlSession = sqlSessionFactory.openSession();
-//            // setIdentifier(sqlSession);
-//            BFSMapper mapper = (BFSMapper) sqlSession.getMapper(BFSMapper.class);
-           String database = getDatabase();
-            node.setDatabase(database);
-            ArrayList<Node> allNeighborNode = new ArrayList<Node>();
+        allNeighborNode.addAll(getAllNeighborNode(dbaobjMap, node));
+
+        if (node.objectType.equals("TABLE")) {
+            allNeighborNode.addAll(getIndexes(dbaobjMap, node));
+            allNeighborNode.addAll(getTriggers(dbaobjMap, node));
+        }
+        allNeighborNode.addAll(getSynonym(dbaobjMap, node));
+        allNeighborNode.addAll(getDblinks(dbaobjMap, node));//DBlink的DDL有点问题
 
 
-            allNeighborNode.addAll(getAllNeighborNode( dbaobjMap, node));
+        // 设置当前节点和边节点的数据库名称
+        String database = getDatabase();
+        node.setDatabase(database);
+        setAllNodeDatabase(allNeighborNode, database);
+        //设置当前节点和边节点的
 
-            if (node.objectType.equals("TABLE")) {
-                allNeighborNode.addAll(getIndexes( dbaobjMap, node));
-                allNeighborNode.addAll(getTriggers(dbaobjMap, node));
-            }
-            allNeighborNode.addAll(getSynonym(dbaobjMap, node));
-            allNeighborNode.addAll(getDblinks( dbaobjMap, node));
-
-
-            // sqlSession.close();
-
-            setAllNodeDatabase(allNeighborNode, database);
-            return allNeighborNode;
-
-
+        return allNeighborNode;
 
 
     }

@@ -10,17 +10,8 @@ import java.util.List;
 
 
 public class SourceCodeDaoThread implements Runnable {
-    //    @Autowired
-//    private SourceCodeDaoImpl sourceCodeDaoImpl;
-//    @Autowired
-//    private ApplicationContext applicationContext;
-//    private final  ThreadLocal<Node> threadLocal = new ThreadLocal<Node>();
 
-//    public void setThreadLocal(Node node) {
-//        threadLocal.set(node);
-//        System.out.println("set node:"+node.objectName);
-//    }
-    private  Node node;
+    private Node node;
 
     private SourceCodeDaoImpl sourceCodeDaoImpl;
 
@@ -36,17 +27,16 @@ public class SourceCodeDaoThread implements Runnable {
     @Override
     public void run() {
         try {
-//            var node=threadLocal.get();
-//            System.out.println("get node:"+node.objectName);
+
             sourceCodeDaoImpl.getSourcode(node);
-         //   sourceCodeDaoImpl.getSourcodeHash(node);
+
             sourceCodeDaoImpl.getSourcodeHashSHA256(node);
 
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-          //  threadLocal.remove();
+
         }
     }
 }

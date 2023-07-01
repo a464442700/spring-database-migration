@@ -1,5 +1,6 @@
 package com.lxf.migration.pojo;
 
+import java.sql.Date;
 import java.util.Objects;
 
 public class Node {
@@ -8,8 +9,10 @@ public class Node {
     public String objectType;
     private Integer level = 0;
     public String database;
+    public Integer objectID;
+    public java.sql.Date lastDDLTime;
 
-    public  String dataSource;
+    public String dataSource;
     private String dependence_type;
 
     public String getMode() {
@@ -20,7 +23,7 @@ public class Node {
         this.mode = mode;
     }
 
-    private String mode ="add";
+    private String mode = "add";
     private String sourceCode;
     public String sourceCodeHash;
     private Node rootNode;
@@ -70,11 +73,23 @@ public class Node {
     public String getDatabase() {
         return database;
     }
-   public  String getNodeVertex(){
-        return this.objectName+"("+this.objectType+")";
-   }
+
+    public String getNodeVertex() {
+        return this.objectName + "(" + this.objectType + ")";
+    }
+
     public void setDatabase(String database) {
-        this.database = database;
+     //    if ( this.database  == null &&  this.database .isEmpty()) {
+             this.database = database;
+      //   }
+    }
+
+    public void setObjectID(Integer objectID) {
+        this.objectID = objectID;
+    }
+
+    public void setLastDDLTime(Date lastDDLTime) {
+        this.lastDDLTime = lastDDLTime;
     }
 
     public Integer getLevel() {
@@ -111,7 +126,9 @@ public class Node {
                 ", dataSource='" + dataSource + '\'' +
                 ", sourceCodeHash='" + sourceCodeHash + '\'' +
                 ", maxLevel=" + maxLevel +
-                ", sourceCode=" +   (sourceCode != null)+
+                ", sourceCode=" + (sourceCode != null) +
+                ", objectID=" + objectID +
+                ", lastDDLTime=" + lastDDLTime +
                 '}';
     }
 

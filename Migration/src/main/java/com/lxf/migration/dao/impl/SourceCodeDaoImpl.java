@@ -4,6 +4,7 @@ package com.lxf.migration.dao.impl;
 import com.lxf.migration.common.Hash;
 import com.lxf.migration.dao.SourceCodeDao;
 import com.lxf.migration.mapper.BFSMapper;
+import com.lxf.migration.model.ServiceName;
 import com.lxf.migration.pojo.Node;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.*;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -32,11 +35,10 @@ import java.util.concurrent.ExecutorService;
 @Service
 //@RequestScope
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SourceCodeDaoImpl implements SourceCodeDao  {
+public class SourceCodeDaoImpl implements SourceCodeDao {
 
 
-
-//    @Autowired
+    //    @Autowired
 //    private ExecutorService threadPool;
 //    @Override
 //    public void run() {
@@ -44,6 +46,10 @@ public class SourceCodeDaoImpl implements SourceCodeDao  {
 //
 //    }
     private BFSMapper mapper;
+
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public void setMapper(BFSMapper mapper) {
         this.mapper = mapper;
@@ -72,6 +78,40 @@ public class SourceCodeDaoImpl implements SourceCodeDao  {
     }
 
     public void getSourcode(Node node) {
+        getSourcodeFromDatabase(node);
+
+    }
+
+    //判断是否选择缓存还是数据库
+    public ServiceName getServiceName(Node node) {
+        //如果redis服务不可用，从数据库读取
+        if (!isRedisEnable(node)){
+            return ServiceName.database;
+        }
+       //如果redis可用，但是
+
+
+        return ServiceName.database;
+    }
+
+
+    public boolean isRedisEnable(Node node) {
+
+        try {
+            // 尝试连接 Redis，通过执行简单的操作来确定 Redis 服务是否生效
+            redisTemplate.opsForValue().get("hello");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
+
+
+
+    }
+
+    //从数据库中读取DDL文件
+    public void getSourcodeFromDatabase(Node node) {
 
 
         Map dbaobjMap = new HashMap();
@@ -105,7 +145,7 @@ public class SourceCodeDaoImpl implements SourceCodeDao  {
             node.setSourceCode(sourCode);
 
         } catch (Exception e) {
-            System.out.println("获取sourceCode异常:"+node.objectName);
+            System.out.println("获取sourceCode异常:" + node.objectName);
             e.printStackTrace();
         }
 
@@ -143,7 +183,7 @@ public class SourceCodeDaoImpl implements SourceCodeDao  {
 
     @Override
     public void getSourcodeHashSHA256(Node node) throws Exception {
-     String  sourceCodeHash= Hash.getSha256(node.getSourceCode());
+        String sourceCodeHash = Hash.getSha256(node.getSourceCode());
         node.setSourceCodeHash(sourceCodeHash);
     }
 
