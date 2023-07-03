@@ -91,6 +91,11 @@ public class DependenciesDaoImpl implements DependenciesDao {
         return database;
     }
 
+    public void setDBAObject(Map dbaobjMap, Node node) {
+        DbaObjects dbaObjects = mapper.selectDbaObjects(dbaobjMap);
+        node.setObjectID(dbaObjects.getObjectID());
+        node.setLastDDLTime(dbaObjects.getLastDDLTime());
+    }
 
     private void setIdentifier(SqlSession sqlSession) {
         Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -120,7 +125,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
         dbaobjMap.put("objectType", node.objectType);
         dbaobjMap.put("objectName", node.objectName);
 
-      //获取所有的边节点，存入allNeighborNode
+        //获取所有的边节点，存入allNeighborNode
         ArrayList<Node> allNeighborNode = new ArrayList<Node>();
 
 
@@ -137,8 +142,10 @@ public class DependenciesDaoImpl implements DependenciesDao {
         // 设置当前节点和边节点的数据库名称
         String database = getDatabase();
         node.setDatabase(database);
-        setAllNodeDatabase(allNeighborNode, database);
-        //设置当前节点和边节点的
+        // setAllNodeDatabase(allNeighborNode, database);//每个节点都会尝试访问子节点，所以不需要额外对子节点赋值
+        //设置当前节点的object_id ,last_ddl_time
+        setDBAObject(dbaobjMap, node);
+
 
         return allNeighborNode;
 

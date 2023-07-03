@@ -23,4 +23,6 @@ public interface BFSMapper {
     void callGetHashCode(Map map);
     void callGetDDL(Map map);
     void callSetIdentifier(Map map);
+
+
 }

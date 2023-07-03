@@ -1,16 +1,17 @@
 package com.lxf.migration.pojo;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.Objects;
 
-public class Node {
+public class Node implements Serializable {
     public String owner;//四个只读属性
     public String objectName;
     public String objectType;
     private Integer level = 0;
     public String database;
     public Integer objectID;
-    public java.sql.Date lastDDLTime;
+    public java.sql.Timestamp  lastDDLTime;
 
     public String dataSource;
     private String dependence_type;
@@ -88,7 +89,7 @@ public class Node {
         this.objectID = objectID;
     }
 
-    public void setLastDDLTime(Date lastDDLTime) {
+    public void setLastDDLTime( java.sql.Timestamp  lastDDLTime) {
         this.lastDDLTime = lastDDLTime;
     }
 

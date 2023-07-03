@@ -8,6 +8,8 @@
         <result column="owner" property="owner"/>
         <result column="object_name" property="objectName"/>
         <result column="object_type" property="objectType"/>
+        <result column="object_id" property="objectID"/>
+        <result column="last_ddl_time" property="lastDDLTime"/>
     </resultMap>
 
     <resultMap id="selecteAllDependenciesMap" type="com.lxf.migration.pojo.DbaObjects">
@@ -28,9 +30,13 @@
     <select id="selectDbaObjects" resultMap="selectDbaObjectsMap">
         select d.owner,
                d.object_name,
-               d.object_type
+               d.object_type,
+               d.object_id,
+               d.last_ddl_time
         from dba_objects d
-        where object_id = #{objectID}
+        where d.owner = #{owner}
+         and d.object_name=#{objectName}
+         and  d.object_type=#{objectType}
     </select>
 
     <select id="selecteDirectDependencies" resultMap="selecteAllDependenciesMap">

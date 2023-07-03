@@ -1,11 +1,33 @@
 package com.lxf.migration.pojo;
 
+import java.sql.Date;
+
 public class DbaObjects {
     private String owner;
     private String objectName;
     private String objectType;
+    private Integer objectID;
+    private  java.sql.Timestamp  lastDDLTime;
 
+    public String getObjectType() {
+        return objectType;
+    }
 
+    public Integer getObjectID() {
+        return objectID;
+    }
+
+    public void setObjectID(Integer objectID) {
+        this.objectID = objectID;
+    }
+
+    public  java.sql.Timestamp  getLastDDLTime() {
+        return lastDDLTime;
+    }
+
+    public void setLastDDLTime( java.sql.Timestamp  lastDDLTime) {
+        this.lastDDLTime = lastDDLTime;
+    }
 
     public void setObjectType(String objectType) {
         this.objectType = objectType;

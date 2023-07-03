@@ -5,6 +5,7 @@ import com.lxf.migration.common.Hash;
 import com.lxf.migration.dao.SourceCodeDao;
 import com.lxf.migration.mapper.BFSMapper;
 import com.lxf.migration.model.ServiceName;
+import com.lxf.migration.pojo.DbaObjects;
 import com.lxf.migration.pojo.Node;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.*;
@@ -17,10 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 
 
 import oracle.sql.CLOB;
@@ -77,25 +75,101 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
         return s.replaceAll(regex, replacement);
     }
 
-    public void getSourcode(Node node) {
-        getSourcodeFromDatabase(node);
-
-    }
-
-    //判断是否选择缓存还是数据库
-    public ServiceName getServiceName(Node node) {
-        //如果redis服务不可用，从数据库读取
-        if (!isRedisEnable(node)){
-            return ServiceName.database;
+    public void setDbaObjects(Node node) {
+        if (node.objectID == null) {
+            Map dbaobjMap = new HashMap();
+            dbaobjMap.put("owner", node.owner);
+            dbaobjMap.put("objectType", node.objectType);
+            dbaobjMap.put("objectName", node.objectName);
+            DbaObjects dbaObjects = mapper.selectDbaObjects(dbaobjMap);
+            node.setObjectID(dbaObjects.getObjectID());
+            node.setLastDDLTime(dbaObjects.getLastDDLTime());
+            if (dbaObjects.getObjectID() == null) {
+                System.out.println("无法获取object_id:" + node.objectName);
+            }
         }
-       //如果redis可用，但是
+        if (node.database == null) {
+            String database = mapper.selectDataBase();
+            node.setDatabase(database);
+        }
 
 
-        return ServiceName.database;
+    }
+
+    public void getSourcode(Node node) {
+        setDbaObjects(node);
+        Node redisNode = null;
+        ServiceName seviceName = ServiceName.database;
+        String hashKey = null;
+        String key = "SOURCECODE" + ":" + node.database;
+        if (!(node.objectID == null)) {
+            hashKey = node.objectID.toString();
+        }
+        //判断redis服务是否可用,如果不可用，从数据库读取
+
+
+        //  getSourcodeFromDatabase(node);
+
+
+        //判断redis是否存在此键 SOURCECODE:DATABASE
+
+        if (!isRedisEnable() || (hashKey == null) || hashKey.isEmpty() || !redisTemplate.hasKey(key) ||
+                !redisTemplate.opsForHash().hasKey(key, hashKey)
+
+        ) {
+            seviceName = ServiceName.database;
+        } else {
+            try {
+                redisNode = (Node) redisTemplate.opsForHash().get(key, hashKey);
+                if (!redisNode.lastDDLTime.equals(node.lastDDLTime)) {
+                    seviceName = ServiceName.database;
+                } else {
+                    seviceName = ServiceName.redis;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                seviceName = ServiceName.database;
+            }
+
+        }
+        if (seviceName.equals(ServiceName.database)) {
+            getSourcodeFromDatabase(node);
+            //将node刷入redis
+            if (isRedisEnable() && !(hashKey == null) && !(node == null)) {
+                try {
+                    // SerializationCheck(node);
+                    redisTemplate.opsForHash().put(key, hashKey, node);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        } else if (!redisNode.dataSource.isEmpty() && !(redisNode == null)) {
+            System.out.println("从redis获取对象：" + redisNode.objectName);
+            node = redisNode;
+
+        }
+
+
+    }
+
+    public void SerializationCheck(Node node) {
+        try {
+            // 尝试将对象序列化到字节数组
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(node);
+
+            System.out.println("Object is serializable");
+        } catch (IOException e) {
+            System.out.println("Object is not serializable: " + e.getMessage());
+        }
+
     }
 
 
-    public boolean isRedisEnable(Node node) {
+    public boolean isRedisEnable() {
 
         try {
             // 尝试连接 Redis，通过执行简单的操作来确定 Redis 服务是否生效
@@ -104,8 +178,6 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
         } catch (Exception e) {
             return false;
         }
-
-
 
 
     }
