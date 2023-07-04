@@ -39,7 +39,8 @@ public class SessionInterceptor implements Interceptor {
         String id = mappedStatement.getId();
 
         if (!id.contains("callSetIdentifier")) {//这个判断防止循环拦截，因为拦截器本来是拦截sql执行，结果拦截器本身又执行了sql
-            callProcedure(invocation);   // 调用存储过程
+         //   callProcedure(invocation);   // 调用存储过程
+            //注释掉拦截器代码
         }
 
 
