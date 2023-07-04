@@ -1,7 +1,10 @@
 package com.lxf.migration.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Node implements Serializable {
@@ -12,6 +15,58 @@ public class Node implements Serializable {
     public String database;
     public Integer objectID;
     public java.sql.Timestamp  lastDDLTime;
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public String getObjectName() {
+        return objectName;
+    }
+
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public Integer getObjectID() {
+        return objectID;
+    }
+
+    public Timestamp getLastDDLTime() {
+        return lastDDLTime;
+    }
+
+    public String getDataSource() {
+        return dataSource;
+    }
+
+    public String getDependence_type() {
+        return dependence_type;
+    }
+
+    public boolean isShowSourceCode() {
+        return showSourceCode;
+    }
+
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public String dataSource;
     private String dependence_type;
@@ -74,7 +129,7 @@ public class Node implements Serializable {
     public String getDatabase() {
         return database;
     }
-
+   @JsonIgnore
     public String getNodeVertex() {
         return this.objectName + "(" + this.objectType + ")";
     }
@@ -100,7 +155,7 @@ public class Node implements Serializable {
     public void setDependence_type(String dependence_type) {
         this.dependence_type = dependence_type;
     }
-
+    @JsonIgnore
     public void setLevel(Node parentNode) {
         if (parentNode.objectType.equals("TABLE")
                 && (this.objectType.equals("INDEX")

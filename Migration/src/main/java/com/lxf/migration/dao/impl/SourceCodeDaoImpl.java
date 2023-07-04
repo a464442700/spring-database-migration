@@ -1,6 +1,7 @@
 package com.lxf.migration.dao.impl;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lxf.migration.common.Hash;
 import com.lxf.migration.dao.SourceCodeDao;
 import com.lxf.migration.mapper.BFSMapper;
@@ -9,11 +10,13 @@ import com.lxf.migration.pojo.DbaObjects;
 import com.lxf.migration.pojo.Node;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
@@ -27,6 +30,7 @@ import oracle.sql.CLOB;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -120,7 +124,18 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
             seviceName = ServiceName.database;
         } else {
             try {
-                redisNode = (Node) redisTemplate.opsForHash().get(key, hashKey);
+                //     var obj =redisTemplate.opsForHash().get(key, hashKey);
+                //System.out.println("反序列化对象："+redisTemplate.opsForHash().get(key, hashKey).getClass());
+                LinkedHashMap<String, Object> redisNodeHashMap = (LinkedHashMap<String, Object>) redisTemplate.opsForHash().get(key, hashKey);
+                // System.out.println("反序列化对象："+redisNodeHashMap.getClass());
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String redisNodeJson = objectMapper.writeValueAsString(redisNodeHashMap);
+
+                Jackson2JsonRedisSerializer<Node> serializer = new Jackson2JsonRedisSerializer<>(Node.class);
+                redisNode = serializer.deserialize(redisNodeJson.getBytes());
+                //   System.out.println("反序列化对象："+redisNode.getClass());
+                //redisNode = (Node) redisTemplate.opsForHash().get(key, hashKey);
                 if (!redisNode.lastDDLTime.equals(node.lastDDLTime)) {
                     seviceName = ServiceName.database;
                 } else {
@@ -145,28 +160,29 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
 
             }
 
-        } else if (!redisNode.dataSource.isEmpty() && !(redisNode == null)) {
-            System.out.println("从redis获取对象：" + redisNode.objectName);
-            node = redisNode;
-
+        } else if (!(redisNode.getSourceCode() == null) && !(redisNode == null)) {
+            //  System.out.println("从redis获取对象：" + redisNode.objectName+redisNode.getSourceCode().substring(1,10));
+            //     node = redisNode;
+            BeanUtils.copyProperties(redisNode,node );
+            //  System.out.println(node.getSourceCode().substring(1, 10));
         }
 
 
     }
 
-    public void SerializationCheck(Node node) {
-        try {
-            // 尝试将对象序列化到字节数组
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(node);
-
-            System.out.println("Object is serializable");
-        } catch (IOException e) {
-            System.out.println("Object is not serializable: " + e.getMessage());
-        }
-
-    }
+//    public void SerializationCheck(Node node) {
+//        try {
+//            // 尝试将对象序列化到字节数组
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ObjectOutputStream oos = new ObjectOutputStream(baos);
+//            oos.writeObject(node);
+//
+//            System.out.println("Object is serializable");
+//        } catch (IOException e) {
+//            System.out.println("Object is not serializable: " + e.getMessage());
+//        }
+//
+//    }
 
 
     public boolean isRedisEnable() {

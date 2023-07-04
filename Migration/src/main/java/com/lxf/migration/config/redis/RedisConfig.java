@@ -1,6 +1,7 @@
 package com.lxf.migration.config.redis;
 
 
+import com.alibaba.fastjson2.support.spring6.data.redis.GenericFastJsonRedisSerializer;
 import jdk.jfr.Name;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,16 +32,23 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 
-    //    RedisSerializer<String> stringSerializer = new StringRedisSerializer();
+        //    RedisSerializer<String> stringSerializer = new StringRedisSerializer();
 //        template.setKeySerializer(stringSerializer);
 //        template.setValueSerializer(stringSerializer);
 //        template.setHashKeySerializer(stringSerializer);
 //        template.setHashValueSerializer(stringSerializer);
+
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
         template.setKeySerializer(serializer);
         template.setValueSerializer(serializer);
         template.setHashKeySerializer(serializer);
         template.setHashValueSerializer(serializer);
+
+//        GenericFastJsonRedisSerializer serializer = new GenericFastJsonRedisSerializer();
+//        template.setKeySerializer(serializer);
+//        template.setValueSerializer(serializer);
+//        template.setHashKeySerializer(serializer);
+//        template.setHashValueSerializer(serializer);
         return template;
     }
 
