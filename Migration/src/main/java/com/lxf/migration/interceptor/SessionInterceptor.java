@@ -1,4 +1,4 @@
-package com.lxf.migration.dao.impl;
+package com.lxf.migration.interceptor;
 
 import com.lxf.migration.mapper.BFSMapper;
 import org.apache.ibatis.executor.statement.StatementHandler;
