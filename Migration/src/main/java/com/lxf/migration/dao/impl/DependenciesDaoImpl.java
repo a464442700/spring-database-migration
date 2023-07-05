@@ -136,7 +136,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
             allNeighborNode.addAll(getTriggers(dbaobjMap, node));
         }
         allNeighborNode.addAll(getSynonym(dbaobjMap, node));
-        allNeighborNode.addAll(getDblinks(dbaobjMap, node));//DBlink的DDL有点问题
+      //  allNeighborNode.addAll(getDblinks(dbaobjMap, node));//DBlink的DDL有点问题
 
 
         // 设置当前节点和边节点的数据库名称
