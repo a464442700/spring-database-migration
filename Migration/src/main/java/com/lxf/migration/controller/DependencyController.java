@@ -32,7 +32,9 @@ public class DependencyController {
 
     @Autowired
     private RedisTemplate redisTemplate;
-    //返回所有节点对象属性
+
+    //返回所有节点对象数组
+    @CrossOrigin(origins = "*")//允许跨域
     @PostMapping("/getAllDependencies")
     public ResponseEntity<Stack<Node>> createPayment(
             @RequestHeader(required = false) String requestId,
@@ -92,17 +94,13 @@ public class DependencyController {
 
 
     //get请求返回节点顺序png图
-    @GetMapping(value = "/downAllDependenciesGraph", produces = MediaType.IMAGE_PNG_VALUE)
+    @PostMapping(value = "/downAllDependenciesGraph", produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     public byte[] downAllDependenciesGraph(
-            @RequestParam String owner,
-            @RequestParam String objectName,
-            @RequestParam String objectType,
-            @RequestParam String dataSource
+            @RequestBody Node node
     ) {
-        var node = new Node(owner, objectName, objectType);
         bfs.init();
-        bfs.setDataSource(dataSource);
+        bfs.setDataSource(node.dataSource);
         bfs.setStartNode(node);
         bfs.setDisplaySourceCode(false);
         bfs.Traverse();
@@ -113,18 +111,19 @@ public class DependencyController {
     }
 
 
+
+
+
+
     //get请求下载所有依赖文件
-    @GetMapping(value = "/downloadAllDependenciesFile", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping(value = "/downloadAllDependenciesFile", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadAllDependenciesFile(
-            @RequestParam String owner,
-            @RequestParam String objectName,
-            @RequestParam String objectType,
-            @RequestParam String dataSource
+            @RequestBody Node node
     ) throws IOException {
-        var node = new Node(owner, objectName, objectType);
+
         bfs.init();
-        bfs.setDataSource(dataSource);
+        bfs.setDataSource(node.dataSource);
         bfs.setStartNode(node);
         bfs.setDisplaySourceCode(true);
         bfs.Traverse();
