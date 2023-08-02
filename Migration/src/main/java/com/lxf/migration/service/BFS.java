@@ -119,6 +119,11 @@ public class BFS implements Runnable {
         if (this.displaySourceCode) {
             this.setSourceCode(node);
         }
+        if( node.dataSource ==null){
+            node.setDataSource(this.dataSource);
+        }
+
+
     }
     private void shutdownPool(){
         if (this.displaySourceCode) {

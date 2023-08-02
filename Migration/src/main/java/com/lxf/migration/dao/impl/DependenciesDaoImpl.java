@@ -144,6 +144,10 @@ public class DependenciesDaoImpl implements DependenciesDao {
             String database = getDatabase();
             node.setDatabase(database);
         }
+        if (node.getDataSource()==null){
+
+        }
+
         // setAllNodeDatabase(allNeighborNode, database);//每个节点都会尝试访问子节点，所以不需要额外对子节点赋值
         //设置当前节点的object_id ,last_ddl_time
         setDBAObject(dbaobjMap, node);

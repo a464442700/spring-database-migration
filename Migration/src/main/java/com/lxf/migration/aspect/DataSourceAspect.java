@@ -28,11 +28,11 @@ public class DataSourceAspect {
         BFS bfs = (BFS)joinPoint.getTarget();
         DependenciesDaoImpl dependenciesDao = bfs.getDependenciesDaoImpl();
         SourceCodeDaoImpl sourceCodeDao= bfs.getSourceCodeDaoImpl();
-        if("local".equals(dataSource)){
+        if("local".equalsIgnoreCase(dataSource)){
             dependenciesDao.setMapper(localMapper);
              sourceCodeDao.setMapper(localMapper);
 
-        }else if ("remote".equals(dataSource)){
+        }else if ("remote".equalsIgnoreCase(dataSource)){
             dependenciesDao.setMapper(remoteMapper);
             sourceCodeDao.setMapper(remoteMapper);
         }
