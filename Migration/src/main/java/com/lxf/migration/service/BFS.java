@@ -6,6 +6,7 @@ import com.lxf.migration.dao.impl.DependenciesDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoThread;
 import com.lxf.migration.pojo.Node;
+import com.lxf.migration.thread.impl.BFSThreadPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -24,7 +25,7 @@ public class BFS implements Runnable {
 //    private SourceCodeDaoThread sourceCodeDaoThread;
 
 
-    private ExecutorService threadPool;
+ //   private ExecutorService threadPool;
 
     public SourceCodeDaoImpl getSourceCodeDaoImpl() {
         return s;
@@ -39,6 +40,8 @@ public class BFS implements Runnable {
     @Autowired
     private DependenciesDaoImpl d;
 
+    @Autowired
+    private BFSThreadPool t;
     private String dataSource;
 
     public void setDataSource(String dataSource) {
@@ -60,7 +63,8 @@ public class BFS implements Runnable {
         this.queue = new LinkedList<Node>();
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
-      this.threadPool = Executors.newFixedThreadPool(10);
+        this.t.init(20);
+       // this.threadPool = Executors.newFixedThreadPool(10);
     }
 
     public BFS() {
@@ -101,14 +105,13 @@ public class BFS implements Runnable {
         return this.set.contains(node);
 
     }
+//调用这个方法就能获取到源码
+//    private void setSourceCode(Node node) {
+//        SourceCodeDaoThread sourceCodeDaoThread=new SourceCodeDaoThread(node,s);
+//
+//        this.threadPool.execute(sourceCodeDaoThread);
 
-    private void setSourceCode(Node node) {
-        SourceCodeDaoThread sourceCodeDaoThread=new SourceCodeDaoThread(node,s);
-
-        this.threadPool.execute(sourceCodeDaoThread);
-//        s.getSourcode(node);
-//        s.getSourcodeHash(node);
-    }
+//    }
 
     //设置访问标签
     public void visited(Node node) {
@@ -117,7 +120,7 @@ public class BFS implements Runnable {
         this.graph.addVertex(node);
         //不打印速度会快一点
         if (this.displaySourceCode) {
-            this.setSourceCode(node);
+          t.setSourceCode(node,s);
         }
         if( node.dataSource ==null){
             node.setDataSource(this.dataSource);
@@ -127,16 +130,17 @@ public class BFS implements Runnable {
     }
     private void shutdownPool(){
         if (this.displaySourceCode) {
-            threadPool.shutdown();
-        //   System.out.println("关闭线程池");
-            while (!threadPool.isTerminated()) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-
-                    e.printStackTrace();
-                }
-            }
+           t.shutdownPool();
+//            threadPool.shutdown();
+//
+//            while (!threadPool.isTerminated()) {//循环是要判断所有的线程是否关闭
+//                try {
+//                    Thread.sleep(100);
+//                } catch (InterruptedException e) {
+//
+//                    e.printStackTrace();
+//                }
+//            }
         }
     }
     //初始化
@@ -146,7 +150,8 @@ public class BFS implements Runnable {
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
         this.stack = new Stack<Node>();
-        this.threadPool = Executors.newFixedThreadPool(20);
+       // this.threadPool =s.getThreadPool(20);// Executors.newFixedThreadPool(20);//初始化20个线程，后续并行获取sourceCode
+        this.t.init(20);
         setDisplaySourceCode(false);
     }
 

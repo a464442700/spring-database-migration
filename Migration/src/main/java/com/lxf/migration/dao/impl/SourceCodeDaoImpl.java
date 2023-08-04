@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 //@RequestScope
@@ -48,6 +49,8 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
 //
 //    }
     private BFSMapper mapper;
+
+
 
 
     @Autowired
@@ -163,7 +166,7 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
         } else if (!(redisNode.getSourceCode() == null) && !(redisNode == null)) {
             //  System.out.println("从redis获取对象：" + redisNode.objectName+redisNode.getSourceCode().substring(1,10));
             //     node = redisNode;
-            BeanUtils.copyProperties(redisNode,node );
+            BeanUtils.copyProperties(redisNode, node);
             //  System.out.println(node.getSourceCode().substring(1, 10));
         }
 

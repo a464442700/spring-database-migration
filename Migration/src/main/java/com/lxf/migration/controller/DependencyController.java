@@ -6,6 +6,7 @@ import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.service.BFS;
+import oracle.ucp.proxy.annotation.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -142,6 +143,27 @@ public class DependencyController {
 
     }
 
+    @PostMapping(value = "/downloadFileByNodes", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadFileByNodes(
+            @RequestBody List<Node> nodes
+    ) throws IOException {
+
+
+        File file = sourceCode.getFile(bfs.getStack());
+
+
+        InputStreamResource isr = file.getFileStream();
+        String folderName = file.getFolderName();
+
+        return ResponseEntity.ok()
+
+                .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(isr);
+
+
+    }
 
     @GetMapping(value = "/downloadCompareDependenciesFile", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody

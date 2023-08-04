@@ -25,14 +25,14 @@ public class DataSourceAspect {
 
     @Around("execution(* com.lxf.migration.service.BFS.setDataSource(..)) && args(dataSource)")
     public Object around(ProceedingJoinPoint joinPoint, String dataSource) throws Throwable {
-        BFS bfs = (BFS)joinPoint.getTarget();
+        BFS bfs = (BFS) joinPoint.getTarget();
         DependenciesDaoImpl dependenciesDao = bfs.getDependenciesDaoImpl();
-        SourceCodeDaoImpl sourceCodeDao= bfs.getSourceCodeDaoImpl();
-        if("local".equalsIgnoreCase(dataSource)){
+        SourceCodeDaoImpl sourceCodeDao = bfs.getSourceCodeDaoImpl();
+        if ("local".equalsIgnoreCase(dataSource)) {
             dependenciesDao.setMapper(localMapper);
-             sourceCodeDao.setMapper(localMapper);
+            sourceCodeDao.setMapper(localMapper);
 
-        }else if ("remote".equalsIgnoreCase(dataSource)){
+        } else if ("remote".equalsIgnoreCase(dataSource)) {
             dependenciesDao.setMapper(remoteMapper);
             sourceCodeDao.setMapper(remoteMapper);
         }
