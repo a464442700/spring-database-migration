@@ -7,6 +7,7 @@ import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoThread;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.thread.impl.BFSThreadPool;
+import com.lxf.migration.thread.impl.ThreadPoolImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -21,8 +22,7 @@ import java.util.concurrent.Executors;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 //@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class BFS implements Runnable {
-//    @Autowired
-//    private SourceCodeDaoThread sourceCodeDaoThread;
+
 
 
  //   private ExecutorService threadPool;
@@ -63,20 +63,20 @@ public class BFS implements Runnable {
         this.queue = new LinkedList<Node>();
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
-        this.t.init(20);
+
        // this.threadPool = Executors.newFixedThreadPool(10);
     }
 
     public BFS() {
 
 
-        this.init();
+       // this.init();
 
     }
 
     public void setStartNode(Node startNode) {
         this.startNode = startNode;
-        this.displaySourceCode = startNode.getShowSourceCode();
+     //   this.displaySourceCode = startNode.getShowSourceCode();
     }
 
     private AdjacencyListGraph<Node> graph;

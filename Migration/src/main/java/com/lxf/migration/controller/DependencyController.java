@@ -1,19 +1,22 @@
 package com.lxf.migration.controller;
 
 import com.lxf.migration.algorithm.AdjacencyListGraph;
+import com.lxf.migration.exception.InvalidRequestException;
 import com.lxf.migration.file.SourceCode;
 import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
+import com.lxf.migration.pojo.Response;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.service.BFS;
-import oracle.ucp.proxy.annotation.Post;
+import com.lxf.migration.thread.impl.BFSThreadPool;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.Stack;
 
 @RestController
+@Api(tags = "源码下载")
 public class DependencyController {
     @Autowired
     private BFS bfs;
@@ -29,6 +33,9 @@ public class DependencyController {
     private BFS RemoteBfs;
     @Autowired
     private SourceCode sourceCode;
+
+    @Autowired
+    private BFSThreadPool threadPool;
     private Stack<Node> stack;
 
     @Autowired
@@ -116,6 +123,8 @@ public class DependencyController {
 
 
 
+
+
     //get请求下载所有依赖文件
     @PostMapping(value = "/downloadAllDependenciesFile", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
@@ -142,15 +151,32 @@ public class DependencyController {
 
 
     }
+    @ExceptionHandler(InvalidRequestException.class)
+    @ResponseBody
+    public ResponseEntity<Response> handleInvalidRequest(InvalidRequestException ex) {
+        Response e=new Response("E",ex.getMessage());
+        return ResponseEntity.badRequest().body(e);
+    }
 
+    @ApiOperation(value = "传入nodes下载对象")
     @PostMapping(value = "/downloadFileByNodes", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadFileByNodes(
             @RequestBody List<Node> nodes
     ) throws IOException {
+        int size=nodes.size();
+
+        if (size == 0) {
+            throw new InvalidRequestException("下载列表不能为空");
+        }
 
 
-        File file = sourceCode.getFile(bfs.getStack());
+        threadPool.init(size);
+     //   threadPool.
+
+
+
+        File file = sourceCode.getFile(nodes);
 
 
         InputStreamResource isr = file.getFileStream();
@@ -205,7 +231,7 @@ public class DependencyController {
         RemoteBfs.setDataSource(dataSource2);
         RemoteBfs.setStartNode(node2);
         RemoteBfs.setDisplaySourceCode(true);
-
+       //两个线程分别执行bfs
         Thread thread1 = new Thread(bfs);
         Thread thread2 = new Thread(RemoteBfs);
         thread1.start();

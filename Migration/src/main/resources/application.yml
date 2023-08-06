@@ -17,9 +17,13 @@ spring:
       host: 47.99.191.156
       port: 6379
       password: apps
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 mybatis:
   mapper-locations: classpath:/com/lxf/migration/mapper/*.xml
   type-aliases-package: com.lxf.migration.pojo
+
 
 
 
