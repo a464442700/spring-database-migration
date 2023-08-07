@@ -7,12 +7,20 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
+@Schema(description = "节点对象")
 public class Node implements Serializable {
+    @Schema(description  = "对象拥有者", example = "apps")
     public String owner;//四个只读属性
+    @Schema(description  = "对象名称", example = "CUX_TEST_A")
     public String objectName;
-    public String objectType;
     private Integer level = 0;
     public String database;
+    @Schema(description  = "对象类型", example = "PACKAGE")
+    public String objectType;
     public Integer objectID;
     public java.sql.Timestamp  lastDDLTime;
 

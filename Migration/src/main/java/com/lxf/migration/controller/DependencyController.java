@@ -9,8 +9,9 @@ import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.service.BFS;
 import com.lxf.migration.thread.impl.BFSThreadPool;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,9 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
-
+@Tag(name = "代码迁移端点服务")
 @RestController
-@Api(tags = "源码下载")
 public class DependencyController {
     @Autowired
     private BFS bfs;
@@ -158,10 +158,11 @@ public class DependencyController {
         return ResponseEntity.badRequest().body(e);
     }
 
-    @ApiOperation(value = "传入nodes下载对象")
+    @Operation(summary ="传入nodes数组，返回源代码")
     @PostMapping(value = "/downloadFileByNodes", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadFileByNodes(
+            @Parameter(description="nodes数组字符串")
             @RequestBody List<Node> nodes
     ) throws IOException {
         int size=nodes.size();
@@ -172,7 +173,7 @@ public class DependencyController {
 
 
         threadPool.init(size);
-     //   threadPool.
+
 
 
 
