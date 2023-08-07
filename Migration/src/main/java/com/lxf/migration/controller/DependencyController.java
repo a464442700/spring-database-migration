@@ -159,7 +159,7 @@ public class DependencyController {
         Response e = new Response("E", ex.getMessage());
         return ResponseEntity.badRequest().body(e);
     }
-
+    @CrossOrigin(origins = "*")//允许跨域
     @Operation(summary = "传入nodes数组，返回源代码")
     @PostMapping(value = "/downloadFileByNodes", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
