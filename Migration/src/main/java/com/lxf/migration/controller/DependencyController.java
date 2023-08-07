@@ -1,6 +1,8 @@
 package com.lxf.migration.controller;
 
 import com.lxf.migration.algorithm.AdjacencyListGraph;
+import com.lxf.migration.dao.SourceCodeDao;
+import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.exception.InvalidRequestException;
 import com.lxf.migration.file.SourceCode;
 import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
@@ -8,7 +10,9 @@ import com.lxf.migration.pojo.Response;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
 import com.lxf.migration.service.BFS;
+import com.lxf.migration.service.SourceCodeService;
 import com.lxf.migration.thread.impl.BFSThreadPool;
+import com.lxf.migration.thread.impl.ThreadPoolImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
+
 @Tag(name = "代码迁移端点服务")
 @RestController
 public class DependencyController {
@@ -30,12 +35,14 @@ public class DependencyController {
     private BFS bfs;
 
     @Autowired
+   private SourceCodeService sourceCodeService;
+    @Autowired
     private BFS RemoteBfs;
     @Autowired
     private SourceCode sourceCode;
 
-    @Autowired
-    private BFSThreadPool threadPool;
+    // @Autowired
+    // private BFSThreadPool threadPool;
     private Stack<Node> stack;
 
     @Autowired
@@ -119,12 +126,6 @@ public class DependencyController {
     }
 
 
-
-
-
-
-
-
     //get请求下载所有依赖文件
     @PostMapping(value = "/downloadAllDependenciesFile", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
@@ -151,32 +152,23 @@ public class DependencyController {
 
 
     }
+
     @ExceptionHandler(InvalidRequestException.class)
     @ResponseBody
     public ResponseEntity<Response> handleInvalidRequest(InvalidRequestException ex) {
-        Response e=new Response("E",ex.getMessage());
+        Response e = new Response("E", ex.getMessage());
         return ResponseEntity.badRequest().body(e);
     }
 
-    @Operation(summary ="传入nodes数组，返回源代码")
+    @Operation(summary = "传入nodes数组，返回源代码")
     @PostMapping(value = "/downloadFileByNodes", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadFileByNodes(
-            @Parameter(description="nodes数组字符串")
+            @Parameter(description = "nodes数组字符串")
             @RequestBody List<Node> nodes
     ) throws IOException {
-        int size=nodes.size();
 
-        if (size == 0) {
-            throw new InvalidRequestException("下载列表不能为空");
-        }
-
-
-        threadPool.init(size);
-
-
-
-
+        sourceCodeService.getSourceCode(nodes);
         File file = sourceCode.getFile(nodes);
 
 
@@ -232,7 +224,7 @@ public class DependencyController {
         RemoteBfs.setDataSource(dataSource2);
         RemoteBfs.setStartNode(node2);
         RemoteBfs.setDisplaySourceCode(true);
-       //两个线程分别执行bfs
+        //两个线程分别执行bfs
         Thread thread1 = new Thread(bfs);
         Thread thread2 = new Thread(RemoteBfs);
         thread1.start();
@@ -264,23 +256,20 @@ public class DependencyController {
     }
 
 
+    @GetMapping("/checkRedisService")
+    public ResponseEntity<String> checkRedisHealth() {
+        try {
+            // 尝试连接 Redis，通过执行简单的操作来确定 Redis 服务是否生效
+            redisTemplate.opsForValue().get("health_check_key");
 
-
-
-        @GetMapping("/checkRedisService")
-        public ResponseEntity<String> checkRedisHealth() {
-            try {
-                // 尝试连接 Redis，通过执行简单的操作来确定 Redis 服务是否生效
-                redisTemplate.opsForValue().get("health_check_key");
-
-                // 如果 Redis 连接正常，返回 HTTP 200 OK
-                return ResponseEntity.ok("Redis is up and running.");
-            } catch (Exception e) {
-                // 如果连接失败或发生异常，返回 HTTP 503 Service Unavailable
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Redis is not available.");
-            }
+            // 如果 Redis 连接正常，返回 HTTP 200 OK
+            return ResponseEntity.ok("Redis is up and running.");
+        } catch (Exception e) {
+            // 如果连接失败或发生异常，返回 HTTP 503 Service Unavailable
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Redis is not available.");
         }
+    }
 
 
 }

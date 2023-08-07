@@ -36,7 +36,7 @@ public class BFS implements Runnable {
     }
 
     @Autowired
-    private SourceCodeDaoImpl s;
+    public SourceCodeDaoImpl s;
     @Autowired
     private DependenciesDaoImpl d;
 
@@ -204,7 +204,7 @@ public class BFS implements Runnable {
         return d.getDatabase();
     }
 
-
+   //这里的run是两个不同的数据源对应的BFS同时跑
     @Override
     public void run() {
         Traverse();
