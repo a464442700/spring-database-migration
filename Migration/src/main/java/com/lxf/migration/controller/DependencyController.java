@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -175,10 +176,14 @@ public class DependencyController {
         InputStreamResource isr = file.getFileStream();
         String folderName = file.getFolderName();
 
+
+
         return ResponseEntity.ok()
 
                 .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header("Access-Control-Expose-Headers", "Content-Disposition")
+                // 解决跨域问题，比如response打印Content-Disposition为空
                 .body(isr);
 
 
