@@ -8,8 +8,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 
-
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "节点对象")
 public class Node implements Serializable {
@@ -17,7 +16,8 @@ public class Node implements Serializable {
     public String owner;//四个只读属性
     @Schema(description  = "对象名称", example = "CUX_TEST_A")
     public String objectName;
-    private Integer level = 0;
+    @JsonProperty("level")//postman输出缺失对象
+    public Integer level = 0;
     public String database;
     @Schema(description  = "对象类型", example = "PACKAGE")
     public String objectType;
@@ -77,7 +77,7 @@ public class Node implements Serializable {
     }
 
     public String dataSource;
-    private String dependence_type;
+    public String dependence_type;
 
     public String getMode() {
         return mode;
@@ -87,12 +87,13 @@ public class Node implements Serializable {
         this.mode = mode;
     }
 
-    private String mode = "add";
+    public String mode = "add";
     private String sourceCode;
     public String sourceCodeHash;
-    private Node rootNode;
-    private Integer maxLevel;
-    private boolean showSourceCode;
+    public Node rootNode;
+    @JsonProperty("maxLevel")
+    public Integer maxLevel;
+    public boolean showSourceCode;
 
     public boolean getShowSourceCode() {
         return showSourceCode;

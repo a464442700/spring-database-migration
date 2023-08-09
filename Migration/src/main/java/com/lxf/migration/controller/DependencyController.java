@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
@@ -26,11 +27,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 @Tag(name = "代码迁移端点服务")
 @RestController
+@Scope("request")
 public class DependencyController {
     @Autowired
     private BFS bfs;
@@ -52,7 +55,7 @@ public class DependencyController {
     //返回所有节点对象数组
     @CrossOrigin(origins = "*")//允许跨域
     @PostMapping("/getAllDependencies")
-    public ResponseEntity<Stack<Node>> createPayment(
+    public ResponseEntity<List<Node>> createPayment(
             @RequestHeader(required = false) String requestId,
             @RequestBody Node node
     ) {
@@ -61,7 +64,7 @@ public class DependencyController {
         bfs.setStartNode(node);
         bfs.setDisplaySourceCode(false);
         bfs.Traverse();
-        stack = bfs.getStack();
+        List<Node> stack =  new ArrayList<>(bfs.getStack());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
