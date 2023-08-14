@@ -6,6 +6,7 @@ import com.lxf.migration.dao.impl.DependenciesDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.dao.impl.SourceCodeDaoThread;
 import com.lxf.migration.pojo.Node;
+import com.lxf.migration.pojo.TreeListNode;
 import com.lxf.migration.thread.impl.BFSThreadPool;
 import com.lxf.migration.thread.impl.ThreadPoolImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,11 @@ public class BFS implements Runnable {
     @Autowired
     private BFSThreadPool t;
     private String dataSource;
+    private    List<TreeListNode> treeListNodes;
+
+    public List<TreeListNode> getTreeListNodes() {
+        return this.treeListNodes;
+    }
 
     public void setDataSource(String dataSource) {
         this.dataSource = dataSource;
@@ -69,8 +75,8 @@ public class BFS implements Runnable {
 
     public BFS() {
 
-
-       // this.init();
+         //BFS属于构造函数，构造函数执行后，才进行注入，所以执行this.init，里面的t对象将会是空的
+        // this.init();
 
     }
 
@@ -150,6 +156,7 @@ public class BFS implements Runnable {
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
         this.stack = new Stack<Node>();
+        this.treeListNodes=new ArrayList<TreeListNode>();
        // this.threadPool =s.getThreadPool(20);// Executors.newFixedThreadPool(20);//初始化20个线程，后续并行获取sourceCode
         this.t.init(20);
         setDisplaySourceCode(false);
@@ -169,8 +176,16 @@ public class BFS implements Runnable {
         while (!this.queue.isEmpty()) {
             v = this.queue.poll();//出队
             //开始访问所有v的子节点
+
+
+
             for (Node u : this.getNeighbors(v)) {
                 this.graph.addSide(v, u);
+                TreeListNode treeListNode =new TreeListNode( u.objectID ,v.objectID,v.objectID.toString() ,u.database+"."+u.owner+"."+u.objectName+"."+ u.objectType);
+                this.treeListNodes.add(treeListNode);
+
+
+
 
                 if (!this.isVisited(u)) {
                     this.visited(u);//访问

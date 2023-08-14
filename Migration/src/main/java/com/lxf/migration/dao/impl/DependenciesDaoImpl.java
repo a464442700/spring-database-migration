@@ -104,6 +104,12 @@ public class DependenciesDaoImpl implements DependenciesDao {
 
     }
 
+    private void setAllNodeDBAObject(Map dbaobjMap,List<Node> nodes){
+        nodes.forEach((node) -> {
+            setDBAObject(dbaobjMap,node);
+
+        });
+    }
 
     private void setAllNodeDatabase(List<Node> nodes, String database) {
 
@@ -118,7 +124,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
 
     @Override
     public ArrayList<Node> findAllNeighborNode(Node node) {
-
+        String database = getDatabase();
 
         Map dbaobjMap = new HashMap();
         dbaobjMap.put("owner", node.owner);
@@ -141,17 +147,21 @@ public class DependenciesDaoImpl implements DependenciesDao {
 
         // 设置当前节点和边节点的数据库名称
         if (node.getDatabase()==null) {
-            String database = getDatabase();
+
             node.setDatabase(database);
         }
         if (node.getDataSource()==null){
 
         }
 
-        // setAllNodeDatabase(allNeighborNode, database);//每个节点都会尝试访问子节点，所以不需要额外对子节点赋值
+
+
         //设置当前节点的object_id ,last_ddl_time
         setDBAObject(dbaobjMap, node);
 
+        //放开此注释是为了TreeList服务
+        setAllNodeDBAObject(dbaobjMap,allNeighborNode);
+        setAllNodeDatabase(allNeighborNode, database);//每个节点都会尝试访问子节点，所以不需要额外对子节点赋值
 
         return allNeighborNode;
 

@@ -9,6 +9,7 @@ import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
 import com.lxf.migration.pojo.Response;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
+import com.lxf.migration.pojo.TreeListNode;
 import com.lxf.migration.service.BFS;
 import com.lxf.migration.service.SourceCodeService;
 import com.lxf.migration.thread.impl.BFSThreadPool;
@@ -39,7 +40,7 @@ public class DependencyController {
     private BFS bfs;
 
     @Autowired
-   private SourceCodeService sourceCodeService;
+    private SourceCodeService sourceCodeService;
     @Autowired
     private BFS RemoteBfs;
     @Autowired
@@ -64,7 +65,7 @@ public class DependencyController {
         bfs.setStartNode(node);
         bfs.setDisplaySourceCode(false);
         bfs.Traverse();
-        List<Node> stack =  new ArrayList<>(bfs.getStack());
+        List<Node> stack = new ArrayList<>(bfs.getStack());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -163,6 +164,8 @@ public class DependencyController {
         Response e = new Response("E", ex.getMessage());
         return ResponseEntity.badRequest().body(e);
     }
+
+
     @CrossOrigin(origins = "*")//允许跨域
     @Operation(summary = "传入nodes数组，返回源代码")
     @PostMapping(value = "/downloadFileByNodes", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -180,7 +183,6 @@ public class DependencyController {
         String folderName = file.getFolderName();
 
 
-
         return ResponseEntity.ok()
 
                 .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
@@ -191,6 +193,27 @@ public class DependencyController {
 
 
     }
+
+    @Operation(summary = "传入node,返回结构化查询树")
+    @CrossOrigin(origins = "*")//允许跨域
+    @PostMapping(value = "/queryTreeList")
+    public ResponseEntity<List<TreeListNode>> queryTreeList(
+            @Parameter(description = "顶层节点")
+            @RequestBody Node node) {
+
+        bfs.init();
+        bfs.setDataSource(node.dataSource);
+        bfs.setStartNode(node);
+        bfs.setDisplaySourceCode(false);
+        bfs.Traverse();
+        List<TreeListNode> treeListNodes=bfs.getTreeListNodes();
+
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(treeListNodes);
+    }
+
 
     @GetMapping(value = "/downloadCompareDependenciesFile", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
