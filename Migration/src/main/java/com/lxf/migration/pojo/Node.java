@@ -34,11 +34,11 @@ public class Node implements Serializable {
     public boolean showSourceCode;
 
     public  Node parentNode ;
-
+    @JsonIgnore
     public Node getParentNode() {
         return parentNode;
     }
-
+    @JsonIgnore
     public void setParentNode(Node parentNode) {
         this.parentNode = parentNode;
     }
@@ -130,19 +130,19 @@ public class Node implements Serializable {
     public void setRootNode(Node rootNode) {
         this.rootNode = rootNode;
     }
-
+    @JsonIgnore
     public String getSourceCodeHash() {
         return sourceCodeHash;
     }
-
+    @JsonIgnore
     public void setSourceCodeHash(String sourceCodeHash) {
         this.sourceCodeHash = sourceCodeHash;
     }
-
+    @JsonIgnore
     public void setSourceCode(String sourceCode) {
         this.sourceCode = sourceCode;
     }
-
+    @JsonIgnore
     public String getSourceCode() {
         return sourceCode;
     }

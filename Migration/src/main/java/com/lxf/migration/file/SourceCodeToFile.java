@@ -12,4 +12,9 @@ public interface SourceCodeToFile {
 
 
     public File getCompareFile(List<Node> localNodes,List<Node> remoteNodes) throws IOException;
+
+    public List<Node> getCompareNode(List<Node> localNodes, List<Node> remoteNodes);
+
+    public  List<Node> getBackupNode(List<Node> localNodes);
+
 }

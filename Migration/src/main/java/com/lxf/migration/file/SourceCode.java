@@ -31,5 +31,15 @@ public class SourceCode {
 
     }
 
+    public List<Node> getCompareNode(List<Node> localNodes, List<Node> remoteNodes) {
+
+        return sourceCodeToFile.getCompareNode(localNodes,remoteNodes);
+    }
+
+
+    public  List<Node> getBackupNode(List<Node> localNodes){
+        return  sourceCodeToFile.getBackupNode(localNodes);
+
+    }
 
 }

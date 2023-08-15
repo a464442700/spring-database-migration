@@ -6,10 +6,7 @@ import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.exception.InvalidRequestException;
 import com.lxf.migration.file.SourceCode;
 import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
-import com.lxf.migration.pojo.Response;
-import com.lxf.migration.pojo.File;
-import com.lxf.migration.pojo.Node;
-import com.lxf.migration.pojo.TreeListNode;
+import com.lxf.migration.pojo.*;
 import com.lxf.migration.service.BFS;
 import com.lxf.migration.service.SourceCodeService;
 import com.lxf.migration.thread.impl.BFSThreadPool;
@@ -283,6 +280,54 @@ public class DependencyController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(isr);
 
+
+    }
+
+    @Operation(summary = "传入目标和源对象，返回有差异的节点")
+    @CrossOrigin(origins = "*")//允许跨域
+    @PostMapping("/getCompareNodes")
+    @ResponseBody
+    public ResponseEntity<List<Node>> getCompareNodes(
+            @RequestBody    CompareNode compareNode
+
+    ) throws IOException {
+
+
+        var node1 = new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
+        var node2 = new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
+
+        bfs.init();
+        bfs.setDataSource(compareNode.dataSource);
+        bfs.setStartNode(node1);
+        bfs.setDisplaySourceCode(false);
+
+        RemoteBfs.init();
+        RemoteBfs.setDataSource(compareNode.remoteDataSource);
+        RemoteBfs.setStartNode(node2);
+        RemoteBfs.setDisplaySourceCode(false);
+
+        Thread thread1 = new Thread(bfs);
+        Thread thread2 = new Thread(RemoteBfs);
+        thread1.start();
+        thread2.start();
+
+        // 等待两个线程执行完毕
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        List<Node> localNodes = bfs.getStack();
+        List<Node> RemoteNodes = RemoteBfs.getStack();
+        List<Node> downloadNode = sourceCode.getCompareNode(localNodes, RemoteNodes);
+
+
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(downloadNode);
 
     }
 

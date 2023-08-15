@@ -47,18 +47,19 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
         map.put("rootNode", rootNode);
         return map;
     }
-  @Override
+
+    @Override
     public void dealNodes(List<Node> nodes) {
-     //   if (!dealFlag) {
-            Map<String, Object> map = getMaxLevel(nodes);
+        //   if (!dealFlag) {
+        Map<String, Object> map = getMaxLevel(nodes);
 
 
-            nodes.forEach((node) -> {
-                node.setMaxLevel((Integer) map.get("maxLevel"));
-                node.setRootNode((Node) map.get("rootNode"));
-            });
-       //     dealFlag = true;
-       // }
+        nodes.forEach((node) -> {
+            node.setMaxLevel((Integer) map.get("maxLevel"));
+            node.setRootNode((Node) map.get("rootNode"));
+        });
+        //     dealFlag = true;
+        // }
     }
 
     public String getFolderName(Node node) {
@@ -124,7 +125,7 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
 
         }
 
-      //  dealNodes(nodes);
+        //  dealNodes(nodes);
 
         String folderName = getFolderName(nodes.get(0));
         InputStreamResource inputStreamResource = getFileStream(nodes);
@@ -139,14 +140,28 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
         return getFile(getCompareNode(localNodes, remoteNodes));
     }
 
-    public String  getDeleteContent(Node node){
+    public String getDeleteContent(Node node) {
 
-        return "DROP"+ " "+node.objectType+" "+node.owner+"."+node.objectName+";";
+        return "DROP" + " " + node.objectType + " " + node.owner + "." + node.objectName + ";";
 
     }
+
+    public List<Node> getBackupNode(List<Node> localNodes) {
+        List<Node> BackupResult = localNodes.stream()
+                .filter(node -> {
+                            return node.mode.equals("Update") || node.mode.equals("Delete");
+                        }
+                ).map(node -> {
+                    node.setDataSource("remote");
+                    return node;
+                })
+                .collect(Collectors.toList());
+        return BackupResult;
+    }
+
     public List<Node> getCompareNode(List<Node> localNodes, List<Node> remoteNodes) {
-      //  System.out.println("localNodes:" + localNodes);
-       // System.out.println("remoteNodes:" + remoteNodes);
+        //  System.out.println("localNodes:" + localNodes);
+        // System.out.println("remoteNodes:" + remoteNodes);
         List<Node> result = new ArrayList<Node>();
         //add
         List<Node> AddResult = localNodes.stream()
