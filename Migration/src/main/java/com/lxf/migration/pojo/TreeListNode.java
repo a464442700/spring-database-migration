@@ -4,13 +4,13 @@ import java.util.List;
 
 public class TreeListNode {
     private Integer id;
-    private Integer pID;
+    private Integer pId;
     private String value;
     private String title;
 
-    public TreeListNode(Integer id, Integer pID, String value, String title) {
+    public TreeListNode(Integer id, Integer pId, String value, String title) {
         this.id = id;
-        this.pID = pID;
+        this.pId = pId;
         this.value = value;
         this.title = title;
     }
@@ -19,7 +19,7 @@ public class TreeListNode {
     public String toString() {
         return "TreeListNode{" +
                 "id=" + id +
-                ", pID=" + pID +
+                ", pId=" + pId +
                 ", value='" + value + '\'' +
                 ", title='" + title + '\'' +
                 '}';
@@ -33,12 +33,12 @@ public class TreeListNode {
         this.id = id;
     }
 
-    public Integer getpID() {
-        return pID;
+    public Integer getpId() {
+        return pId;
     }
 
-    public void setpID(Integer pID) {
-        this.pID = pID;
+    public void setpId(Integer pId) {
+        this.pId = pId;
     }
 
     public String getValue() {

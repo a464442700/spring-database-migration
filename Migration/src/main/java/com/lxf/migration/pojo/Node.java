@@ -16,13 +16,32 @@ public class Node implements Serializable {
     public String owner;//四个只读属性
     @Schema(description  = "对象名称", example = "CUX_TEST_A")
     public String objectName;
-    @JsonProperty("level")//postman输出缺失对象
+    @JsonProperty("level")//postman输出缺失对象,必须加此注解
     public Integer level = 0;
     public String database;
     @Schema(description  = "对象类型", example = "PACKAGE")
     public String objectType;
     public Integer objectID;
     public java.sql.Timestamp  lastDDLTime;
+    public String dataSource;
+    public String dependence_type;
+    public String mode = "add";
+    private String sourceCode;
+    public String sourceCodeHash;
+    public Node rootNode;
+    @JsonProperty("maxLevel")
+    public Integer maxLevel;
+    public boolean showSourceCode;
+
+    public  Node parentNode ;
+
+    public Node getParentNode() {
+        return parentNode;
+    }
+
+    public void setParentNode(Node parentNode) {
+        this.parentNode = parentNode;
+    }
 
     public void setOwner(String owner) {
         this.owner = owner;
@@ -76,8 +95,7 @@ public class Node implements Serializable {
         this.dataSource = dataSource;
     }
 
-    public String dataSource;
-    public String dependence_type;
+
 
     public String getMode() {
         return mode;
@@ -87,13 +105,7 @@ public class Node implements Serializable {
         this.mode = mode;
     }
 
-    public String mode = "add";
-    private String sourceCode;
-    public String sourceCodeHash;
-    public Node rootNode;
-    @JsonProperty("maxLevel")
-    public Integer maxLevel;
-    public boolean showSourceCode;
+
 
     public boolean getShowSourceCode() {
         return showSourceCode;

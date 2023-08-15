@@ -160,8 +160,8 @@ public class DependenciesDaoImpl implements DependenciesDao {
         setDBAObject(dbaobjMap, node);
 
         //放开此注释是为了TreeList服务
-        setAllNodeDBAObject(dbaobjMap,allNeighborNode);
-        setAllNodeDatabase(allNeighborNode, database);//每个节点都会尝试访问子节点，所以不需要额外对子节点赋值
+//        setAllNodeDBAObject(dbaobjMap,allNeighborNode);
+//        setAllNodeDatabase(allNeighborNode, database);//每个节点都会尝试访问子节点，所以不需要额外对子节点赋值
 
         return allNeighborNode;
 

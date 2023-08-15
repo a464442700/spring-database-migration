@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Service
 //@RequestScope
@@ -25,8 +26,7 @@ import java.util.concurrent.Executors;
 public class BFS implements Runnable {
 
 
-
- //   private ExecutorService threadPool;
+    //   private ExecutorService threadPool;
 
     public SourceCodeDaoImpl getSourceCodeDaoImpl() {
         return s;
@@ -44,10 +44,18 @@ public class BFS implements Runnable {
     @Autowired
     private BFSThreadPool t;
     private String dataSource;
-    private    List<TreeListNode> treeListNodes;
+    private List<TreeListNode> treeListNodes;
 
     public List<TreeListNode> getTreeListNodes() {
-        return this.treeListNodes;
+
+        return this.set.stream().map((node) -> {
+            return new TreeListNode(node.objectID, node.parentNode != null ?node.parentNode.objectID:null,
+                    node.database + "." + node.owner + "." + node.objectName + "." + node.objectType,
+                    "["+node.objectType+ "] " +  node.objectName
+            );
+        }).collect(Collectors.toList());
+
+
     }
 
     public void setDataSource(String dataSource) {
@@ -70,19 +78,19 @@ public class BFS implements Runnable {
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
 
-       // this.threadPool = Executors.newFixedThreadPool(10);
+        // this.threadPool = Executors.newFixedThreadPool(10);
     }
 
     public BFS() {
 
-         //BFS属于构造函数，构造函数执行后，才进行注入，所以执行this.init，里面的t对象将会是空的
+        //BFS属于构造函数，构造函数执行后，才进行注入，所以执行this.init，里面的t对象将会是空的
         // this.init();
 
     }
 
     public void setStartNode(Node startNode) {
         this.startNode = startNode;
-     //   this.displaySourceCode = startNode.getShowSourceCode();
+        //   this.displaySourceCode = startNode.getShowSourceCode();
     }
 
     private AdjacencyListGraph<Node> graph;
@@ -126,17 +134,18 @@ public class BFS implements Runnable {
         this.graph.addVertex(node);
         //不打印速度会快一点
         if (this.displaySourceCode) {
-          t.setSourceCode(node,s);
+            t.setSourceCode(node, s);
         }
-        if( node.dataSource ==null){
+        if (node.dataSource == null) {
             node.setDataSource(this.dataSource);
         }
 
 
     }
-    private void shutdownPool(){
+
+    private void shutdownPool() {
         if (this.displaySourceCode) {
-           t.shutdownPool();
+            t.shutdownPool();
 //            threadPool.shutdown();
 //
 //            while (!threadPool.isTerminated()) {//循环是要判断所有的线程是否关闭
@@ -149,6 +158,7 @@ public class BFS implements Runnable {
 //            }
         }
     }
+
     //初始化
     public void init() {
 
@@ -156,8 +166,8 @@ public class BFS implements Runnable {
         this.set = new HashSet<Node>();
         this.graph = new AdjacencyListGraph<Node>();
         this.stack = new Stack<Node>();
-        this.treeListNodes=new ArrayList<TreeListNode>();
-       // this.threadPool =s.getThreadPool(20);// Executors.newFixedThreadPool(20);//初始化20个线程，后续并行获取sourceCode
+        this.treeListNodes = new ArrayList<TreeListNode>();
+        // this.threadPool =s.getThreadPool(20);// Executors.newFixedThreadPool(20);//初始化20个线程，后续并行获取sourceCode
         this.t.init(20);
         setDisplaySourceCode(false);
     }
@@ -178,13 +188,11 @@ public class BFS implements Runnable {
             //开始访问所有v的子节点
 
 
-
             for (Node u : this.getNeighbors(v)) {
                 this.graph.addSide(v, u);
-                TreeListNode treeListNode =new TreeListNode( u.objectID ,v.objectID,v.objectID.toString() ,u.database+"."+u.owner+"."+u.objectName+"."+ u.objectType);
-                this.treeListNodes.add(treeListNode);
-
-
+                //   TreeListNode treeListNode =new TreeListNode( u.objectID ,v.objectID,v.objectID.toString() ,u.database+"."+u.owner+"."+u.objectName+"."+ u.objectType);
+                //    this.treeListNodes.add(treeListNode);
+                u.setParentNode(v);
 
 
                 if (!this.isVisited(u)) {
@@ -219,7 +227,7 @@ public class BFS implements Runnable {
         return d.getDatabase();
     }
 
-   //这里的run是两个不同的数据源对应的BFS同时跑
+    //这里的run是两个不同的数据源对应的BFS同时跑
     @Override
     public void run() {
         Traverse();
