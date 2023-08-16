@@ -36,9 +36,9 @@ public class BFS implements Runnable {
         return d;
     }
 
-    @Autowired
+   // @Autowired//切面进行了手动注入，这个注解加了没有用，为什么没有自动注入，因为BFS是new 出来的，没有被容器管理
     public SourceCodeDaoImpl s;
-    @Autowired
+    // @Autowired//切面进行了手动注入，
     private DependenciesDaoImpl d;
 
     @Autowired

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +25,8 @@ public class SourceCodeService {
     @Autowired
     @Qualifier("remoteMapper")
     private BFSMapper remoteMapper;
-
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public void getSourceCode(List<Node> nodes) {
 
@@ -39,6 +41,7 @@ public class SourceCodeService {
 
         for (Node node : nodes) {
             SourceCodeDaoImpl sourceCodeDaoImpl = new SourceCodeDaoImpl();
+            sourceCodeDaoImpl.setRedisTemplate(redisTemplate);
             if (node.getDataSource().equalsIgnoreCase("local")) {
                 sourceCodeDaoImpl.setMapper(localMapper);
 

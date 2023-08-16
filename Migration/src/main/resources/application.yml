@@ -22,6 +22,9 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  devtools:
+    restart:
+      enabled=true:
 mybatis:
   mapper-locations: classpath:/com/lxf/migration/mapper/*.xml
   type-aliases-package: com.lxf.migration.pojo

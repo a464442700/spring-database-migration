@@ -31,7 +31,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
 //    @Qualifier("localMapper")
 //    private BFSMapper mapper;
     //将静态注入改成动态注入
-
+//为什么mapper不能自动注入，因为最顶层的BFS是手动new的
     private BFSMapper mapper;
 
     public void setMapper(BFSMapper mapper) {

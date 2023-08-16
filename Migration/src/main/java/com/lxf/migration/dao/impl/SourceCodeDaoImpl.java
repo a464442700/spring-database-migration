@@ -8,6 +8,7 @@ import com.lxf.migration.mapper.BFSMapper;
 import com.lxf.migration.model.ServiceName;
 import com.lxf.migration.pojo.DbaObjects;
 import com.lxf.migration.pojo.Node;
+import jakarta.annotation.Resource;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.*;
 import org.springframework.beans.BeanUtils;
@@ -41,19 +42,16 @@ import java.util.concurrent.Executors;
 public class SourceCodeDaoImpl implements SourceCodeDao {
 
 
-    //    @Autowired
-//    private ExecutorService threadPool;
-//    @Override
-//    public void run() {
-//        getSourcode( node)
-//
-//    }
+
     private BFSMapper mapper;
 
 
 
-    @Autowired
     private RedisTemplate redisTemplate;
+
+    public void setRedisTemplate(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     public void setMapper(BFSMapper mapper) {
         this.mapper = mapper;

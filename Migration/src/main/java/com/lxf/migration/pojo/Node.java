@@ -90,7 +90,21 @@ public class Node implements Serializable {
     public void setLevel(Integer level) {
         this.level = level;
     }
+    @JsonIgnore
+    public void setLevel(Node parentNode) {
+        if (parentNode.objectType.equals("TABLE")
+                && (this.objectType.equals("INDEX")
+                || this.objectType.equals("TRIGGER")
+                || this.objectType.equals("SYNONYM")
 
+        )
+        ) {
+            this.level = parentNode.level - 1;
+        } else {
+            this.level = parentNode.level + 1;
+        }
+
+    }
     public void setDataSource(String dataSource) {
         this.dataSource = dataSource;
     }
@@ -176,21 +190,7 @@ public class Node implements Serializable {
     public void setDependence_type(String dependence_type) {
         this.dependence_type = dependence_type;
     }
-    @JsonIgnore
-    public void setLevel(Node parentNode) {
-        if (parentNode.objectType.equals("TABLE")
-                && (this.objectType.equals("INDEX")
-                || this.objectType.equals("TRIGGER")
-                || this.objectType.equals("SYNONYM")
 
-        )
-        ) {
-            this.level = parentNode.level - 1;
-        } else {
-            this.level = parentNode.level + 1;
-        }
-
-    }
 
     @Override
     public String toString() {

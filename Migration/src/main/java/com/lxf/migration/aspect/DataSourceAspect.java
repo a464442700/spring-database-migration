@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -23,6 +24,9 @@ public class DataSourceAspect {
     @Qualifier("remoteMapper")
     private BFSMapper remoteMapper;
 
+//    @Autowired
+//    private RedisTemplate redisTemplate;
+
     @Around("execution(* com.lxf.migration.service.BFS.setDataSource(..)) && args(dataSource)")
     public Object around(ProceedingJoinPoint joinPoint, String dataSource) throws Throwable {
         BFS bfs = (BFS) joinPoint.getTarget();
@@ -31,10 +35,12 @@ public class DataSourceAspect {
         if ("local".equalsIgnoreCase(dataSource)) {
             dependenciesDao.setMapper(localMapper);
             sourceCodeDao.setMapper(localMapper);
+           // sourceCodeDao.setRedisTemplate(redisTemplate);
 
         } else if ("remote".equalsIgnoreCase(dataSource)) {
             dependenciesDao.setMapper(remoteMapper);
             sourceCodeDao.setMapper(remoteMapper);
+            //sourceCodeDao.setRedisTemplate(redisTemplate);
         }
         return joinPoint.proceed();
     }

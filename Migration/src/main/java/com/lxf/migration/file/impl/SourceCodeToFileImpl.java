@@ -3,6 +3,7 @@ package com.lxf.migration.file.impl;
 import com.lxf.migration.file.SourceCodeToFile;
 import com.lxf.migration.pojo.File;
 import com.lxf.migration.pojo.Node;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -31,16 +32,35 @@ public class SourceCodeToFileImpl implements SourceCodeToFile {
 
     private Boolean dealFlag = false;
 
+
+
     private Map<String, Object> getMaxLevel(List<Node> nodes) {
-        Node rootNode = null;
-        Integer maxLevel = 0;
-        for (Node node : nodes) {
-            if (node.getLevel().equals(0)) {
-                rootNode = node;
+
+
+//        for (Node node : nodes) {
+//            if (node.getLevel().equals(0)) {
+//                rootNode = node;
+//            }
+//            if (node.getLevel() > maxLevel) {
+//                maxLevel = node.getLevel();
+//            }
+//        }
+//
+        Node rootNode= nodes.get(0);
+        Integer minLevel=nodes.get(0).getLevel();
+        Integer maxLevel=nodes.get(0).getLevel();
+        for (Node node:nodes){
+            if (minLevel >node.getLevel()){
+                minLevel=node.getLevel();
+                rootNode=node;
+
             }
-            if (node.getLevel() > maxLevel) {
-                maxLevel = node.getLevel();
+            if (maxLevel<node.getLevel()){
+                maxLevel=node.getLevel();
+
+
             }
+
         }
         Map<String, Object> map = new HashMap<>();
         map.put("maxLevel", maxLevel);
