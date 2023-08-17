@@ -136,7 +136,10 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
                 redisNode = serializer.deserialize(redisNodeJson.getBytes());
                 //   System.out.println("反序列化对象："+redisNode.getClass());
                 //redisNode = (Node) redisTemplate.opsForHash().get(key, hashKey);
-                if (!redisNode.lastDDLTime.equals(node.lastDDLTime)) {
+                if (!redisNode.lastDDLTime.equals(node.lastDDLTime)
+                || redisNode.sourceCode== null||
+                        redisNode.sourceCodeHash ==null
+                ) {
                     seviceName = ServiceName.database;
                 } else {
                     seviceName = ServiceName.redis;

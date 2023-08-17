@@ -9,6 +9,7 @@ import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
 import com.lxf.migration.pojo.*;
 import com.lxf.migration.service.BFS;
 import com.lxf.migration.service.SourceCodeService;
+import com.lxf.migration.service.SourceCodeParalleService;
 import com.lxf.migration.thread.impl.BFSThreadPool;
 import com.lxf.migration.thread.impl.ThreadPoolImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,6 +50,9 @@ public class DependencyController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private SourceCodeParalleService sourceCodeParalleService;
 
     //返回所有节点对象数组
     @CrossOrigin(origins = "*")//允许跨域
@@ -172,7 +176,7 @@ public class DependencyController {
             @RequestBody List<Node> nodes
     ) throws IOException {
 
-        sourceCodeService.getSourceCode(nodes);
+        sourceCodeParalleService.getSourceCode(nodes);
         File file = sourceCode.getFile(nodes);
 
 

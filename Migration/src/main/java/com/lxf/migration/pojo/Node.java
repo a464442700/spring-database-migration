@@ -26,13 +26,13 @@ public class Node implements Serializable {
     public String dataSource;
     public String dependence_type;
     public String mode = "add";
-    private String sourceCode;
+    public String sourceCode;
     public String sourceCodeHash;
     public Node rootNode;
     @JsonProperty("maxLevel")
     public Integer maxLevel;
     public boolean showSourceCode;
-
+    @JsonIgnore
     public  Node parentNode ;
     @JsonIgnore
     public Node getParentNode() {
@@ -144,19 +144,19 @@ public class Node implements Serializable {
     public void setRootNode(Node rootNode) {
         this.rootNode = rootNode;
     }
-    @JsonIgnore
+
     public String getSourceCodeHash() {
         return sourceCodeHash;
     }
-    @JsonIgnore
+
     public void setSourceCodeHash(String sourceCodeHash) {
         this.sourceCodeHash = sourceCodeHash;
     }
-    @JsonIgnore
+
     public void setSourceCode(String sourceCode) {
         this.sourceCode = sourceCode;
     }
-    @JsonIgnore
+
     public String getSourceCode() {
         return sourceCode;
     }
