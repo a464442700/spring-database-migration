@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 //@RequestScope
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 //@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class BFS implements Runnable {
+public class BFS implements  Runnable  {
 
 
     //   private ExecutorService threadPool;
@@ -41,8 +41,8 @@ public class BFS implements Runnable {
     // @Autowired//切面进行了手动注入，
     private DependenciesDaoImpl d;
 
-    @Autowired
-    private BFSThreadPool t;
+//    @Autowired
+//    private BFSThreadPool t;
     private String dataSource;
     private List<TreeListNode> treeListNodes;
 
@@ -133,9 +133,9 @@ public class BFS implements Runnable {
         this.stack.add(node);//入栈，作用是从栈弹出的一定是level最高的
         this.graph.addVertex(node);
         //不打印速度会快一点
-        if (this.displaySourceCode) {
-            t.setSourceCode(node, s);
-        }
+//        if (this.displaySourceCode) {
+//            t.setSourceCode(node, s);
+//        }
         if (node.dataSource == null) {
             node.setDataSource(this.dataSource);
         }
@@ -143,21 +143,21 @@ public class BFS implements Runnable {
 
     }
 
-    private void shutdownPool() {
-        if (this.displaySourceCode) {
-            t.shutdownPool();
-//            threadPool.shutdown();
-//
-//            while (!threadPool.isTerminated()) {//循环是要判断所有的线程是否关闭
-//                try {
-//                    Thread.sleep(100);
-//                } catch (InterruptedException e) {
-//
-//                    e.printStackTrace();
-//                }
-//            }
-        }
-    }
+//    private void shutdownPool() {
+//        if (this.displaySourceCode) {
+//            t.shutdownPool();
+////            threadPool.shutdown();
+////
+////            while (!threadPool.isTerminated()) {//循环是要判断所有的线程是否关闭
+////                try {
+////                    Thread.sleep(100);
+////                } catch (InterruptedException e) {
+////
+////                    e.printStackTrace();
+////                }
+////            }
+//        }
+//    }
 
     //初始化
     public void init() {
@@ -168,10 +168,17 @@ public class BFS implements Runnable {
         this.stack = new Stack<Node>();
         this.treeListNodes = new ArrayList<TreeListNode>();
         // this.threadPool =s.getThreadPool(20);// Executors.newFixedThreadPool(20);//初始化20个线程，后续并行获取sourceCode
-        this.t.init(20);
+        //this.t.init(20);
         setDisplaySourceCode(false);
     }
+    public void  start(Node node){
 
+
+        this.init();
+        this.setDataSource(node.dataSource);
+        this.setStartNode(node);
+        this.setDisplaySourceCode(node.showSourceCode);
+    }
     private ArrayList<Node> getNeighbors(Node node) {
         //   DependenciesDaoImpl d = new DependenciesDaoImpl();
         ArrayList<Node> nodes = d.findAllNeighborNode(node);
@@ -204,7 +211,7 @@ public class BFS implements Runnable {
 
         }
         //等到所有多线程获取源码执行完毕，再往下进行
-        shutdownPool();
+       // shutdownPool();
 
     }
 

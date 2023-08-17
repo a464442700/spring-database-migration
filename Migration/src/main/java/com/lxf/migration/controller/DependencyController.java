@@ -4,6 +4,7 @@ import com.lxf.migration.algorithm.AdjacencyListGraph;
 import com.lxf.migration.dao.SourceCodeDao;
 import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.exception.InvalidRequestException;
+import com.lxf.migration.factory.BFSFactory;
 import com.lxf.migration.file.SourceCode;
 import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
 import com.lxf.migration.pojo.*;
@@ -229,21 +230,7 @@ public class DependencyController {
             @RequestParam String dataSource2
 
     ) throws IOException {
-//        var node1 = new Node(owner1, objectName1, objectType1);
-//        bfs.init();
-//        bfs.setDataSource(dataSource1);
-//        bfs.setStartNode(node1);
-//        bfs.setDisplaySourceCode(true);
-//        bfs.Traverse();
-//        List<Node> localNodes =bfs.getStack();
-//
-//        var node2= new Node(owner2, objectName2, objectType2);
-//        bfs.init();
-//        bfs.setDataSource(dataSource2);
-//        bfs.setStartNode(node2);
-//        bfs.setDisplaySourceCode(true);
-//        bfs.Traverse();
-//        List<Node> RemoteNodes =bfs.getStack();
+
 
 
         var node1 = new Node(owner1, objectName1, objectType1);
@@ -256,19 +243,19 @@ public class DependencyController {
         RemoteBfs.setDataSource(dataSource2);
         RemoteBfs.setStartNode(node2);
         RemoteBfs.setDisplaySourceCode(true);
-        //两个线程分别执行bfs
-        Thread thread1 = new Thread(bfs);
-        Thread thread2 = new Thread(RemoteBfs);
-        thread1.start();
-        thread2.start();
-
-        // 等待两个线程执行完毕
-        try {
-            thread1.join();
-            thread2.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        //两个线程分别执行bfs
+//        Thread thread1 = new Thread(bfs);
+//        Thread thread2 = new Thread(RemoteBfs);
+//        thread1.start();
+//        thread2.start();
+//
+//        // 等待两个线程执行完毕
+//        try {
+//            thread1.join();
+//            thread2.join();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         List<Node> localNodes = bfs.getStack();
         List<Node> RemoteNodes = RemoteBfs.getStack();
@@ -297,18 +284,19 @@ public class DependencyController {
     ) throws IOException {
 
 
-        var node1 = new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
-        var node2 = new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
 
-        bfs.init();
-        bfs.setDataSource(compareNode.dataSource);
-        bfs.setStartNode(node1);
-        bfs.setDisplaySourceCode(false);
+        Node node1 =new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
+        Node node2 =new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
 
-        RemoteBfs.init();
-        RemoteBfs.setDataSource(compareNode.remoteDataSource);
-        RemoteBfs.setStartNode(node2);
-        RemoteBfs.setDisplaySourceCode(false);
+        node1.setDataSource(compareNode.dataSource);
+        node2.setDataSource(compareNode.remoteDataSource);
+//        BFS bfs = BFSFactory.createBFS(node1);
+//        BFS RemoteBfs = BFSFactory.createBFS(node2);
+
+
+
+
+
 
         Thread thread1 = new Thread(bfs);
         Thread thread2 = new Thread(RemoteBfs);
