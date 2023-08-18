@@ -208,7 +208,7 @@ public class DependencyController {
         bfs.setStartNode(node);
         bfs.setDisplaySourceCode(false);
         bfs.Traverse();
-        List<TreeListNode> treeListNodes=bfs.getTreeListNodes();
+        List<TreeListNode> treeListNodes = bfs.getTreeListNodes();
 
 
         return ResponseEntity
@@ -230,7 +230,6 @@ public class DependencyController {
             @RequestParam String dataSource2
 
     ) throws IOException {
-
 
 
         var node1 = new Node(owner1, objectName1, objectType1);
@@ -279,23 +278,27 @@ public class DependencyController {
     @PostMapping("/getCompareNodes")
     @ResponseBody
     public ResponseEntity<List<Node>> getCompareNodes(
-            @RequestBody    CompareNode compareNode
+            @RequestBody CompareNode compareNode
 
     ) throws IOException {
 
 
-
-        Node node1 =new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
-        Node node2 =new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
+        Node node1 = new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
+        Node node2 = new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
+        node1.setShowSourceCode(false);//不显示源码
+        node2.setShowSourceCode(false);//不显示源码
 
         node1.setDataSource(compareNode.dataSource);
         node2.setDataSource(compareNode.remoteDataSource);
-//        BFS bfs = BFSFactory.createBFS(node1);
+
+//        BFS bfs = BFSFactory.createBFS(node1);//工厂生产出来的不能自动注入
 //        BFS RemoteBfs = BFSFactory.createBFS(node2);
 
+        bfs.start(node1);
+        bfs.setDataSource(node1.dataSource);//AOP切面只能捕捉到对象外的调用，只能加到这里
 
-
-
+        RemoteBfs.start(node2);
+        RemoteBfs.setDataSource(node2.dataSource);
 
 
         Thread thread1 = new Thread(bfs);
@@ -314,7 +317,6 @@ public class DependencyController {
         List<Node> localNodes = bfs.getStack();
         List<Node> RemoteNodes = RemoteBfs.getStack();
         List<Node> downloadNode = sourceCode.getCompareNode(localNodes, RemoteNodes);
-
 
 
         return ResponseEntity

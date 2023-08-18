@@ -26,9 +26,10 @@ public class DataSourceAspect {
 
 //    @Autowired
 //    private RedisTemplate redisTemplate;
-
+//切面只注入了mapper
     @Around("execution(* com.lxf.migration.service.BFS.setDataSource(..)) && args(dataSource)")
     public Object around(ProceedingJoinPoint joinPoint, String dataSource) throws Throwable {
+        System.out.println("切面执行");
         BFS bfs = (BFS) joinPoint.getTarget();
         DependenciesDaoImpl dependenciesDao = bfs.getDependenciesDaoImpl();
         SourceCodeDaoImpl sourceCodeDao = bfs.getSourceCodeDaoImpl();

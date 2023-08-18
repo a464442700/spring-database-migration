@@ -36,9 +36,10 @@ public class BFS implements  Runnable  {
         return d;
     }
 
-   // @Autowired//切面进行了手动注入，这个注解加了没有用，为什么没有自动注入，因为BFS是new 出来的，没有被容器管理
+    @Autowired//切面进行了手动注入，这个注解加了没有用，为什么没有自动注入，因为BFS是new 出来的，没有被容器管理
+    //切面注入的是mapper,不是service，所以当我把new BFS去掉后
     public SourceCodeDaoImpl s;
-    // @Autowired//切面进行了手动注入，
+     @Autowired//切面进行了手动注入，
     private DependenciesDaoImpl d;
 
 //    @Autowired
@@ -175,8 +176,10 @@ public class BFS implements  Runnable  {
 
 
         this.init();
-        this.setDataSource(node.dataSource);
         this.setStartNode(node);
+       // this.setDataSource(node.dataSource);
+      //在AOP中，切面是通过代理机制实现的。当你通过获取实例并直接调用实例方法时，
+        // 实际上不会经过AOP的代理对象，而是直接调用实际对象的方法。因此，切面对于同一个实例内部调用的方法不会起作用。
         this.setDisplaySourceCode(node.showSourceCode);
     }
     private ArrayList<Node> getNeighbors(Node node) {
