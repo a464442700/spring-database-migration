@@ -6,6 +6,7 @@ import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.exception.InvalidRequestException;
 import com.lxf.migration.factory.BFSFactory;
 import com.lxf.migration.file.SourceCode;
+import com.lxf.migration.file.ZipFile;
 import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
 import com.lxf.migration.pojo.*;
 import com.lxf.migration.service.BFS;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 @Tag(name = "代码迁移端点服务")
 @RestController
@@ -173,25 +175,54 @@ public class DependencyController {
     @PostMapping(value = "/downloadFileByNodes", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadFileByNodes(
+            @RequestHeader(required = false) boolean backupFlag,
             @Parameter(description = "nodes数组字符串")
             @RequestBody List<Node> nodes
     ) throws IOException {
+   System.out.println(backupFlag);
+        if (!backupFlag) {
+            //备份文件
+            sourceCodeParalleService.getSourceCode(nodes);
+            File localFile = sourceCode.getFile(nodes);
+            String folderName = localFile.getFolderName();
+            //再拷贝一个remote数组，只保留Update Delete
+            List<Node> remoteNodes = nodes.stream().filter(
+                    node ->  node.getMode().equals("Update") || node.getMode().equals("Delete")
+                    ).map(node->{node.setDataSource("remote") ;return node;}).collect(Collectors.toList());
+           sourceCodeParalleService.getSourceCode(remoteNodes);
+            File remoteFile = sourceCode.getFile(remoteNodes);
 
-        sourceCodeParalleService.getSourceCode(nodes);
-        File file = sourceCode.getFile(nodes);
+            InputStreamResource localResource  = localFile.getFileStream();
+            InputStreamResource remoteResource  = remoteFile.getFileStream();
+            ZipFile zipFile =new ZipFile();
+            InputStreamResource   ZipInputStreamResource= zipFile.createNestedZip(localResource,remoteResource);
+
+            return ResponseEntity.ok()
+
+                    .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header("Access-Control-Expose-Headers", "Content-Disposition")
+                    // 解决跨域问题，比如response打印Content-Disposition为空
+                    .body(ZipInputStreamResource);
+
+        } else {  //不备份文件
+            sourceCodeParalleService.getSourceCode(nodes);
+            File file = sourceCode.getFile(nodes);
 
 
-        InputStreamResource isr = file.getFileStream();
-        String folderName = file.getFolderName();
+            InputStreamResource isr = file.getFileStream();
+            String folderName = file.getFolderName();
 
 
-        return ResponseEntity.ok()
+            return ResponseEntity.ok()
 
-                .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header("Access-Control-Expose-Headers", "Content-Disposition")
-                // 解决跨域问题，比如response打印Content-Disposition为空
-                .body(isr);
+                    .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header("Access-Control-Expose-Headers", "Content-Disposition")
+                    // 解决跨域问题，比如response打印Content-Disposition为空
+                    .body(isr);
+
+        }
 
 
     }
@@ -278,6 +309,7 @@ public class DependencyController {
     @PostMapping("/getCompareNodes")
     @ResponseBody
     public ResponseEntity<List<Node>> getCompareNodes(
+
             @RequestBody CompareNode compareNode
 
     ) throws IOException {

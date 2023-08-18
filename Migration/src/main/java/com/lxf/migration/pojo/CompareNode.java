@@ -15,4 +15,5 @@ public class CompareNode {
 
     public String dataSource;
     public String remoteDataSource;
+
 }

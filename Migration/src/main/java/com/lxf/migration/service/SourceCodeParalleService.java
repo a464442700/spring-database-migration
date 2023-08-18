@@ -53,6 +53,7 @@ public class SourceCodeParalleService {
 
 
     public void getSourceCode(List<Node> nodes) {
+
         nodes.parallelStream().forEach(node -> {
             try {
                 setSourceCode(node);

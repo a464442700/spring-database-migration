@@ -28,6 +28,7 @@ public class Node implements Serializable {
     public String mode = "add";
     public String sourceCode;
     public String sourceCodeHash;
+    @JsonIgnore
     public Node rootNode;
     @JsonProperty("maxLevel")
     public Integer maxLevel;
