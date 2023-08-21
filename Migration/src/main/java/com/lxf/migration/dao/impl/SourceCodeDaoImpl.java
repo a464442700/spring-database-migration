@@ -9,6 +9,7 @@ import com.lxf.migration.model.ServiceName;
 import com.lxf.migration.pojo.DbaObjects;
 import com.lxf.migration.pojo.Node;
 import jakarta.annotation.Resource;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.*;
 import org.springframework.beans.BeanUtils;
@@ -42,9 +43,7 @@ import java.util.concurrent.Executors;
 public class SourceCodeDaoImpl implements SourceCodeDao {
 
 
-
     private BFSMapper mapper;
-
 
 
     private RedisTemplate redisTemplate;
@@ -77,6 +76,29 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
         String regex = "\r\n(?=CREATE OR REPLACE EDITIONABLE PACKAGE BODY)";
         String replacement = "/\r\n";
         return s.replaceAll(regex, replacement);
+    }
+
+    public boolean isObjectExists(Node node, BFSMapper mapper) {
+        try {
+            Map dbaobjMap = new HashMap();
+            dbaobjMap.put("owner", node.owner);
+            dbaobjMap.put("objectType", node.objectType);
+            dbaobjMap.put("objectName", node.objectName);
+            DbaObjects dbaObjects = mapper.selectDbaObjects(dbaobjMap);
+            if (dbaObjects == null ) {
+                return false;
+
+            } else {
+                return true;
+            }
+        } catch (
+                Exception e
+
+        ) {
+            return false;
+        }
+
+
     }
 
     public void setDbaObjects(Node node) {
@@ -137,8 +159,8 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
                 //   System.out.println("反序列化对象："+redisNode.getClass());
                 //redisNode = (Node) redisTemplate.opsForHash().get(key, hashKey);
                 if (!redisNode.lastDDLTime.equals(node.lastDDLTime)
-                || redisNode.sourceCode== null||
-                        redisNode.sourceCodeHash ==null
+                        || redisNode.sourceCode == null ||
+                        redisNode.sourceCodeHash == null
                 ) {
                     seviceName = ServiceName.database;
                 } else {
@@ -187,7 +209,10 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
 //
 //    }
 
-
+    public String getDatabase() {
+        String database = mapper.selectDataBase();
+        return database;
+    }
     public boolean isRedisEnable() {
 
         try {
@@ -200,7 +225,11 @@ public class SourceCodeDaoImpl implements SourceCodeDao {
 
 
     }
+    public String getDeleteContent(Node node) {
 
+        return "DROP" + " " + node.objectType + " " + node.owner + "." + node.objectName + ";";
+
+    }
     //从数据库中读取DDL文件
     public void getSourcodeFromDatabase(Node node) {
 

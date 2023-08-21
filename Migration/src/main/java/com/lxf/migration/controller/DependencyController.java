@@ -179,17 +179,38 @@ public class DependencyController {
             @Parameter(description = "nodes数组字符串")
             @RequestBody List<Node> nodes
     ) throws IOException {
-   System.out.println(backupFlag);
+
         if (!backupFlag) {
-            //备份文件
+            //不备份文件
+            sourceCodeParalleService.getSourceCode(nodes);
+            File file = sourceCode.getFile(nodes);
+
+
+            InputStreamResource isr = file.getFileStream();
+            String folderName = file.getFolderName();
+
+            return ResponseEntity.ok()
+
+                    .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header("Access-Control-Expose-Headers", "Content-Disposition")
+                    // 解决跨域问题，比如response打印Content-Disposition为空
+                    .body(isr);
+
+
+
+        } else {  //备份文件
+
             sourceCodeParalleService.getSourceCode(nodes);
             File localFile = sourceCode.getFile(nodes);
             String folderName = localFile.getFolderName();
             //再拷贝一个remote数组，只保留Update Delete
-            List<Node> remoteNodes = nodes.stream().filter(
-                    node ->  node.getMode().equals("Update") || node.getMode().equals("Delete")
-                    ).map(node->{node.setDataSource("remote") ;return node;}).collect(Collectors.toList());
-           sourceCodeParalleService.getSourceCode(remoteNodes);
+//            List<Node> remoteNodes = nodes.stream().filter(
+//                    node ->  node.getMode().equals("Update") || node.getMode().equals("Delete")
+//            ).map(node->{node.setDataSource("remote") ;return node;}).collect(Collectors.toList());
+
+
+             List<Node> remoteNodes=    sourceCodeParalleService.getBackupNodes(nodes);
             File remoteFile = sourceCode.getFile(remoteNodes);
 
             InputStreamResource localResource  = localFile.getFileStream();
@@ -204,23 +225,6 @@ public class DependencyController {
                     .header("Access-Control-Expose-Headers", "Content-Disposition")
                     // 解决跨域问题，比如response打印Content-Disposition为空
                     .body(ZipInputStreamResource);
-
-        } else {  //不备份文件
-            sourceCodeParalleService.getSourceCode(nodes);
-            File file = sourceCode.getFile(nodes);
-
-
-            InputStreamResource isr = file.getFileStream();
-            String folderName = file.getFolderName();
-
-
-            return ResponseEntity.ok()
-
-                    .header("Content-Disposition", "attachment; filename=" + folderName + ".zip")
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header("Access-Control-Expose-Headers", "Content-Disposition")
-                    // 解决跨域问题，比如response打印Content-Disposition为空
-                    .body(isr);
 
         }
 
@@ -317,8 +321,8 @@ public class DependencyController {
 
         Node node1 = new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
         Node node2 = new Node(compareNode.owner, compareNode.objectName, compareNode.objectType);
-        node1.setShowSourceCode(false);//不显示源码
-        node2.setShowSourceCode(false);//不显示源码
+        node1.setShowSourceCode(true);//不显示源码
+        node2.setShowSourceCode(true);//不显示源码
 
         node1.setDataSource(compareNode.dataSource);
         node2.setDataSource(compareNode.remoteDataSource);
@@ -328,10 +332,10 @@ public class DependencyController {
 
         bfs.start(node1);
         bfs.setDataSource(node1.dataSource);//AOP切面只能捕捉到对象外的调用，只能加到这里
-
+        bfs.setDisplaySourceCode(true);
         RemoteBfs.start(node2);
         RemoteBfs.setDataSource(node2.dataSource);
-
+        RemoteBfs.setDisplaySourceCode(true);
 
         Thread thread1 = new Thread(bfs);
         Thread thread2 = new Thread(RemoteBfs);
@@ -357,7 +361,7 @@ public class DependencyController {
 
     }
 
-
+    @CrossOrigin(origins = "*")
     @GetMapping("/checkRedisService")
     public ResponseEntity<String> checkRedisHealth() {
         try {
@@ -372,6 +376,19 @@ public class DependencyController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Redis is not available.");
         }
     }
+    @CrossOrigin(origins = "*")
+    @GetMapping("/checkSpringBootService")
+    public ResponseEntity<String> checkSpringBootService() {
+        try {
 
+
+            // 如果 Redis 连接正常，返回 HTTP 200 OK
+            return ResponseEntity.ok("SpringBoot is up and running.");
+        } catch (Exception e) {
+            // 如果连接失败或发生异常，返回 HTTP 503 Service Unavailable
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("SpringBoot is not available.");
+        }
+    }
 
 }

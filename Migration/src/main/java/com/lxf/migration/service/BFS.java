@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 //@RequestScope
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 //@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class BFS implements  Runnable  {
+public class BFS implements Runnable {
 
 
     //   private ExecutorService threadPool;
@@ -39,10 +39,10 @@ public class BFS implements  Runnable  {
     @Autowired//切面进行了手动注入，这个注解加了没有用，为什么没有自动注入，因为BFS是new 出来的，没有被容器管理
     //切面注入的是mapper,不是service，所以当我把new BFS去掉后
     public SourceCodeDaoImpl s;
-     @Autowired//切面进行了手动注入，
+    @Autowired//切面进行了手动注入，
     private DependenciesDaoImpl d;
 
-//    @Autowired
+    //    @Autowired
 //    private BFSThreadPool t;
     private String dataSource;
     private List<TreeListNode> treeListNodes;
@@ -50,9 +50,9 @@ public class BFS implements  Runnable  {
     public List<TreeListNode> getTreeListNodes() {
 
         return this.set.stream().map((node) -> {
-            return new TreeListNode(node.objectID, node.parentNode != null ?node.parentNode.objectID:null,
+            return new TreeListNode(node.objectID, node.parentNode != null ? node.parentNode.objectID : null,
                     node.database + "." + node.owner + "." + node.objectName + "." + node.objectType,
-                    "["+node.objectType+ "] " +  node.objectName
+                    "[" + node.objectType + "] " + node.objectName
             );
         }).collect(Collectors.toList());
 
@@ -134,9 +134,15 @@ public class BFS implements  Runnable  {
         this.stack.add(node);//入栈，作用是从栈弹出的一定是level最高的
         this.graph.addVertex(node);
         //不打印速度会快一点
-//        if (this.displaySourceCode) {
-//            t.setSourceCode(node, s);
-//        }
+        if (this.displaySourceCode) {
+            s.getSourcode(node);
+
+            try {
+                s.getSourcodeHashSHA256(node);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         if (node.dataSource == null) {
             node.setDataSource(this.dataSource);
         }
@@ -172,16 +178,18 @@ public class BFS implements  Runnable  {
         //this.t.init(20);
         setDisplaySourceCode(false);
     }
-    public void  start(Node node){
+
+    public void start(Node node) {
 
 
         this.init();
         this.setStartNode(node);
-       // this.setDataSource(node.dataSource);
-      //在AOP中，切面是通过代理机制实现的。当你通过获取实例并直接调用实例方法时，
+        // this.setDataSource(node.dataSource);
+        //在AOP中，切面是通过代理机制实现的。当你通过获取实例并直接调用实例方法时，
         // 实际上不会经过AOP的代理对象，而是直接调用实际对象的方法。因此，切面对于同一个实例内部调用的方法不会起作用。
         this.setDisplaySourceCode(node.showSourceCode);
     }
+
     private ArrayList<Node> getNeighbors(Node node) {
         //   DependenciesDaoImpl d = new DependenciesDaoImpl();
         ArrayList<Node> nodes = d.findAllNeighborNode(node);
@@ -190,6 +198,11 @@ public class BFS implements  Runnable  {
 
 
     public void Traverse() {
+        //判断起点node是否存在
+
+        if (!d.isObjectExists(this.startNode, d.getMapper())) {
+            return;
+        }
         Node v = this.startNode;//起始节点
         this.visited(v);//设置访问标记
         this.queue.add(v);//访问后入队
@@ -214,7 +227,7 @@ public class BFS implements  Runnable  {
 
         }
         //等到所有多线程获取源码执行完毕，再往下进行
-       // shutdownPool();
+        // shutdownPool();
 
     }
 

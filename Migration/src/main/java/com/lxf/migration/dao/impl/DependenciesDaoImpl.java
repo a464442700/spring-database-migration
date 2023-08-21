@@ -27,7 +27,11 @@ import java.util.Map;
 //@RequestScope
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DependenciesDaoImpl implements DependenciesDao {
-//    @Autowired
+    public BFSMapper getMapper() {
+        return mapper;
+    }
+
+    //    @Autowired
 //    @Qualifier("localMapper")
 //    private BFSMapper mapper;
     //将静态注入改成动态注入
@@ -37,6 +41,7 @@ public class DependenciesDaoImpl implements DependenciesDao {
     public void setMapper(BFSMapper mapper) {
         this.mapper = mapper;
     }
+
 
     private ArrayList<Node> getNodes(List<DbaObjects> allNeighbors, Node parentNode, String dependence_type) {
         ArrayList<Node> nodes = new ArrayList<Node>();
@@ -91,6 +96,29 @@ public class DependenciesDaoImpl implements DependenciesDao {
         return database;
     }
 
+    public boolean isObjectExists(Node node, BFSMapper mapper) {
+        try {
+            Map dbaobjMap = new HashMap();
+            dbaobjMap.put("owner", node.owner);
+            dbaobjMap.put("objectType", node.objectType);
+            dbaobjMap.put("objectName", node.objectName);
+            DbaObjects dbaObjects = mapper.selectDbaObjects(dbaobjMap);
+            if (dbaObjects == null ) {
+                return false;
+
+            } else {
+                return true;
+            }
+        } catch (
+                Exception e
+
+        ) {
+            return false;
+        }
+
+
+    }
+
     public void setDBAObject(Map dbaobjMap, Node node) {
         DbaObjects dbaObjects = mapper.selectDbaObjects(dbaobjMap);
         node.setObjectID(dbaObjects.getObjectID());
@@ -124,6 +152,11 @@ public class DependenciesDaoImpl implements DependenciesDao {
 
     @Override
     public ArrayList<Node> findAllNeighborNode(Node node) {
+        //判断节点是否存在
+        if (!isObjectExists(node,mapper)){
+            return null ;
+        }
+
         String database = getDatabase();
 
         Map dbaobjMap = new HashMap();

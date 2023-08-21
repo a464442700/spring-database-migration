@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -26,7 +27,7 @@ public class SourceCodeParalleService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    private SourceCodeDaoImpl sourceCodeDaoImpl;
+    // private SourceCodeDaoImpl sourceCodeDaoImpl;
 
     private void setSourceCode(Node node) throws Exception {
 
@@ -45,10 +46,16 @@ public class SourceCodeParalleService {
         }
 
 
-
         sourceCodeDaoImpl.getSourcode(node);
 
         sourceCodeDaoImpl.getSourcodeHashSHA256(node);
+
+
+        if (node.getDataSource().equalsIgnoreCase("remote") &&
+                node.getMode().equals("Delete")) {
+            String sourceCode = sourceCodeDaoImpl.getDeleteContent(node);
+            node.setSourceCode(sourceCode);
+        }
     }
 
 
@@ -64,4 +71,47 @@ public class SourceCodeParalleService {
         });
 
     }
+
+    public List<Node> getBackupNodes(List<Node> nodes) {
+
+
+        return nodes.parallelStream().filter(
+
+                node -> {
+
+
+                    SourceCodeDaoImpl sourceCodeDaoImpl = new SourceCodeDaoImpl();
+                    sourceCodeDaoImpl.setRedisTemplate(redisTemplate);
+                    //远程存在，就要备份
+                    if (sourceCodeDaoImpl.isObjectExists(node, remoteMapper)) {
+
+                        return true;
+
+                    } else {
+                        return false;
+                    }
+
+
+                }
+
+        ).map(node -> {
+                    node.setMode("Backup");
+                    node.setDataSource("REMOTE");
+
+                    SourceCodeDaoImpl sourceCodeDaoImpl = new SourceCodeDaoImpl();
+                    sourceCodeDaoImpl.setMapper(remoteMapper);
+                    sourceCodeDaoImpl.getSourcode(node);
+                   node.setDatabase( sourceCodeDaoImpl.getDatabase());
+                    try {
+                        sourceCodeDaoImpl.getSourcodeHashSHA256(node);
+                    } catch (Exception e) {
+
+                        e.printStackTrace();
+                        throw new InvalidRequestException("获取散列结果错误" + node.objectName);
+                    }
+                    return node;
+                }
+        ).collect(Collectors.toList());
+    }
+
 }
