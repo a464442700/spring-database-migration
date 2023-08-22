@@ -9,9 +9,14 @@ import java.util.Objects;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "节点对象")
 public class Node implements Serializable {
+
+
     @Schema(description  = "对象拥有者", example = "apps")
     public String owner;//四个只读属性
     @Schema(description  = "对象名称", example = "CUX_TEST_A")

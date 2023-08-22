@@ -14,8 +14,12 @@ import com.lxf.migration.service.SourceCodeService;
 import com.lxf.migration.service.SourceCodeParalleService;
 import com.lxf.migration.thread.impl.BFSThreadPool;
 import com.lxf.migration.thread.impl.ThreadPoolImpl;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -363,21 +367,24 @@ public class DependencyController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/checkRedisService")
-    public ResponseEntity<String> checkRedisHealth() {
+    public ResponseEntity<Boolean> checkRedisHealth() {
         try {
             // 尝试连接 Redis，通过执行简单的操作来确定 Redis 服务是否生效
             redisTemplate.opsForValue().get("health_check_key");
 
             // 如果 Redis 连接正常，返回 HTTP 200 OK
-            return ResponseEntity.ok("Redis is up and running.");
+            return ResponseEntity.ok(true);
         } catch (Exception e) {
             // 如果连接失败或发生异常，返回 HTTP 503 Service Unavailable
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Redis is not available.");
+            return ResponseEntity.ok(false);
         }
     }
+
+
+
     @CrossOrigin(origins = "*")
-    @GetMapping("/checkSpringBootService")
+    @GetMapping("/checkDatabaseStatus")
     public ResponseEntity<String> checkSpringBootService() {
         try {
 

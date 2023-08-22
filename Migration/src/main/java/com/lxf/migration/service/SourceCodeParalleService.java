@@ -70,6 +70,18 @@ public class SourceCodeParalleService {
 
         });
 
+        nodes.parallelStream().forEach(node->{});
+
+
+    }
+    //table新增了一列，不能简单drop 再create ,必须修正
+    public void getUpdateNodeSourceCode(Node node){
+        if (node.getMode().equals("Update") && node.getObjectType().equals("TABLE")
+        &&(node.getDataSource().equalsIgnoreCase("LOCAL"))
+        ){
+
+        }
+
     }
 
     public List<Node> getBackupNodes(List<Node> nodes) {
@@ -101,7 +113,7 @@ public class SourceCodeParalleService {
                     SourceCodeDaoImpl sourceCodeDaoImpl = new SourceCodeDaoImpl();
                     sourceCodeDaoImpl.setMapper(remoteMapper);
                     sourceCodeDaoImpl.getSourcode(node);
-                   node.setDatabase( sourceCodeDaoImpl.getDatabase());
+                    node.setDatabase( sourceCodeDaoImpl.getDatabase());
                     try {
                         sourceCodeDaoImpl.getSourcodeHashSHA256(node);
                     } catch (Exception e) {
