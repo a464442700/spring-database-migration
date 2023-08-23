@@ -10,6 +10,7 @@ import com.lxf.migration.file.ZipFile;
 import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
 import com.lxf.migration.pojo.*;
 import com.lxf.migration.service.BFS;
+import com.lxf.migration.service.CheckStatusService;
 import com.lxf.migration.service.SourceCodeService;
 import com.lxf.migration.service.SourceCodeParalleService;
 import com.lxf.migration.thread.impl.BFSThreadPool;
@@ -60,7 +61,8 @@ public class DependencyController {
 
     @Autowired
     private SourceCodeParalleService sourceCodeParalleService;
-
+    @Autowired
+    private CheckStatusService checkStatusService;
     //返回所有节点对象数组
     @CrossOrigin(origins = "*")//允许跨域
     @PostMapping("/getAllDependencies")
@@ -384,18 +386,17 @@ public class DependencyController {
 
 
     @CrossOrigin(origins = "*")
-    @GetMapping("/checkDatabaseStatus")
-    public ResponseEntity<String> checkSpringBootService() {
-        try {
+    @GetMapping("/checkServiceStatus")
+    public ResponseEntity<List<ServiceStatus>> checkServiceStatus() {
+
+        List<ServiceStatus> serviceStatusList=  checkStatusService.getServiceStatus();
+        //本地数据库连接
 
 
-            // 如果 Redis 连接正常，返回 HTTP 200 OK
-            return ResponseEntity.ok("SpringBoot is up and running.");
-        } catch (Exception e) {
-            // 如果连接失败或发生异常，返回 HTTP 503 Service Unavailable
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("SpringBoot is not available.");
-        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(serviceStatusList);
+
     }
 
 }
