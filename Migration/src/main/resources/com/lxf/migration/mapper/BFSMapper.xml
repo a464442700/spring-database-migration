@@ -161,6 +161,14 @@
 
 
     </select>
+    <select id="selectDbaRolePrivs" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM DBA_ROLE_PRIVS D
+        WHERE D.GRANTED_ROLE =  #{privilege}
+          AND D.GRANTEE = #{grantee}
+    </select>
+
+
     <select id="checkConnectStatus" resultType="java.lang.Integer">
         select 1 from dual
     </select>

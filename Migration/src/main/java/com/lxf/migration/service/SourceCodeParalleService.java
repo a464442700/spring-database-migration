@@ -31,7 +31,7 @@ public class SourceCodeParalleService {
 
     private void setSourceCode(Node node) throws Exception {
 
-
+        String mode= node.mode  ;
         SourceCodeDaoImpl sourceCodeDaoImpl = new SourceCodeDaoImpl();
         sourceCodeDaoImpl.setRedisTemplate(redisTemplate);
         if (node.getDataSource().equalsIgnoreCase("local")) {
@@ -49,13 +49,22 @@ public class SourceCodeParalleService {
         sourceCodeDaoImpl.getSourcode(node);
 
         sourceCodeDaoImpl.getSourcodeHashSHA256(node);
-
-
+       node.setMode(mode);
+ //加工源码
         if (node.getDataSource().equalsIgnoreCase("remote") &&
-                node.getMode().equals("Delete")) {
+                mode.equals("Delete")) {
             String sourceCode = sourceCodeDaoImpl.getDeleteContent(node);
             node.setSourceCode(sourceCode);
         }
+        //存在bug，后续修复
+        if (node.getDataSource().equalsIgnoreCase("local") &&
+                mode.equalsIgnoreCase("Update")
+        &&  node.getObjectType().equalsIgnoreCase("TABLE")
+        ) {
+            String sourceCode ="当table column出现修改时，涉及到列的集合判断，存在bug,后续修复";
+            node.setSourceCode(sourceCode);
+        }
+
     }
 
 

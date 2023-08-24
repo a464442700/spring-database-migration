@@ -111,6 +111,42 @@ public class CheckStatusService {
 
     }
 
+    private ServiceStatus getDbaRolePrivs(String source, String privilege) {
+        if (!((localConnect && source.equalsIgnoreCase("local"))
+                || (remoteConnect && source.equalsIgnoreCase("remote")
+        ))) {
+            return null;
+        }
+        String userName = env.getProperty("spring.datasource." + source + ".username");
+        Map map = new HashMap();
+
+        map.put("grantee", userName.toUpperCase());
+        map.put("privilege", privilege);
+        Integer count = null;
+        BFSMapper mapper = null;
+        if (source.equalsIgnoreCase("local")) {
+            mapper = localMapper;
+        } else if (source.equalsIgnoreCase("remote")) {
+            mapper = remoteMapper;
+        }
+
+        String dataBase = getDataBase(mapper);
+        String dataBaseResult = (dataBase != null) ? dataBase : source;
+        try {
+            count = mapper.selectDbaRolePrivs(map);
+        } catch (Exception e) {
+            count = 0;
+
+        }
+
+        if ( count == 0) {
+            return new ServiceStatus("please execute [grant " + privilege + " to " + userName + "] in " + dataBaseResult + " database", "#990000");
+
+        } else {
+            return null;
+        }
+
+    }
 
     public List<ServiceStatus> getServiceStatus() {
 
@@ -192,6 +228,23 @@ public class CheckStatusService {
 
         }
 //=====================================================///
+
+        //local
+        serviceStatus = getDbaRolePrivs("local", "SELECT_CATALOG_ROLE");
+        if (serviceStatus != null) {
+            serviceStatusList.add(serviceStatus);
+
+        }
+
+        //remote
+
+        serviceStatus = getDbaRolePrivs("remote", "SELECT_CATALOG_ROLE");
+        if (serviceStatus != null) {
+            serviceStatusList.add(serviceStatus);
+
+        }
+
+
 
 //        //local
 //        serviceStatus=  getDbaSysPrivs("local", "CREATE SESSION");

@@ -24,5 +24,7 @@ public interface BFSMapper {
     void callSetIdentifier(Map map);
     Integer selectDbaTabPrivs(Map map);
     Integer selectDbaSysPrivs(Map map);
+    Integer selectDbaRolePrivs(Map map);
     Integer checkConnectStatus();
+
 }
