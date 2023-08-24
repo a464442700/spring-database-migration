@@ -12,8 +12,8 @@ spring:
     remote:
       driver-class-name: oracle.jdbc.OracleDriver
       url: jdbc:oracle:thin:@//127.0.0.1:1523/XEPDB1
-      username: apps
-      password: apps
+      username: appsquery1
+      password: appsquery1
   data:
     redis:
       host: 47.99.191.156

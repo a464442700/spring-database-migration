@@ -156,11 +156,13 @@
     <select id="selectDbaSysPrivs" resultType="java.lang.Integer">
         select count(1)
         from DBA_SYS_PRIVS p
-        where p.privilege = 'SELECT ANY DICTIONARY'
+        where p.privilege = #{privilege}
           and p.GRANTEE = #{grantee}
 
 
     </select>
-
+    <select id="checkConnectStatus" resultType="java.lang.Integer">
+        select 1 from dual
+    </select>
 
 </mapper>
