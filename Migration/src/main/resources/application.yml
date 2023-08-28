@@ -1,0 +1,35 @@
+server:
+  port: 8080
+  servlet:
+    container: undertow
+spring:
+  datasource:
+    local:
+      driver-class-name: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
+      username: appsquery
+      password: appsquery
+    remote:
+      driver-class-name: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:@47.99.191.156:1521:DUPDB
+      username: appsquery
+      password: appsquery
+  data:
+    redis:
+      host: 47.99.191.156
+      port: 6379
+      password: apps
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  devtools:
+    restart:
+      enabled=true:
+mybatis:
+  mapper-locations: classpath:/com/lxf/migration/mapper/*.xml
+  type-aliases-package: com.lxf.migration.pojo
+
+
+
+
+
