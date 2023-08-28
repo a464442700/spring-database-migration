@@ -1,0 +1,4 @@
+当前目录下直接执行
+java -jar Migration-1.1-RELEASE.jar
+
+yum文件请自行将XXXX替换成本地数据库所在的IP地址

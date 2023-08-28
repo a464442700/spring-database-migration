@@ -1,0 +1,8 @@
+进入到build目录，执行serve
+如果报错。请查看文档，《react部署到本地.docx》
+
+为什么这里有两个文件夹
+1.本地windows
+2.远程linux
+因为本地的URL简单，直接配置localhost就行
+远程的必须指定特定URL，配置到静态文件.env中，更换部署服务器必须修改.env文件然后重新打包，暂时没有想到好的方法动态设置base url

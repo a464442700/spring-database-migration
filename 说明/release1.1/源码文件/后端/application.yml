@@ -1,0 +1,35 @@
+server:
+  port: 8080
+  servlet:
+    container: undertow
+spring:
+  datasource:
+    local:
+      driver-class-name: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:xxxxxx:1521:DUPDB
+      username: appstest1
+      password: appstest1
+    remote:
+      driver-class-name: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:xxxxxx:1521:STANDBY
+      username: apps
+      password: apps
+  data:
+    redis:
+      host: xxxxxxxx
+      port: 6379
+      password: apps
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  devtools:
+    restart:
+      enabled=true:
+mybatis:
+  mapper-locations: classpath:/com/lxf/migration/mapper/*.xml
+  type-aliases-package: com.lxf.migration.pojo
+
+
+
+
+
