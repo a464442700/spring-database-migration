@@ -130,7 +130,7 @@ public class LocalDataSourceConfig {
         dataSource.setPoolPingQuery("SELECT 1 FROM DUAL");
         dataSource.setPoolPingConnectionsNotUsedFor(30000);//如果在30秒内未使用连接，请 ping 数据库以确保连接仍在 好。
         dataSource.setDefaultAutoCommit(false);
-        
+
         //  System.out.println("注册datasource成功");
         return dataSource;
     }
