@@ -1,10 +1,8 @@
 package com.lxf.migration.controller;
 
 import com.lxf.migration.algorithm.AdjacencyListGraph;
-import com.lxf.migration.dao.SourceCodeDao;
-import com.lxf.migration.dao.impl.SourceCodeDaoImpl;
 import com.lxf.migration.exception.InvalidRequestException;
-import com.lxf.migration.factory.BFSFactory;
+import com.lxf.migration.file.ObjectsListService;
 import com.lxf.migration.file.SourceCode;
 import com.lxf.migration.file.ZipFile;
 import com.lxf.migration.file.impl.JgraphtGraphPictureImpl;
@@ -13,14 +11,8 @@ import com.lxf.migration.service.BFS;
 import com.lxf.migration.service.CheckStatusService;
 import com.lxf.migration.service.SourceCodeService;
 import com.lxf.migration.service.SourceCodeParalleService;
-import com.lxf.migration.thread.impl.BFSThreadPool;
-import com.lxf.migration.thread.impl.ThreadPoolImpl;
-import io.swagger.annotations.Example;
-import io.swagger.annotations.ExampleProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -33,10 +25,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 @Tag(name = "代码迁移端点服务")
 @RestController
@@ -45,6 +37,8 @@ public class DependencyController {
     @Autowired
     private BFS bfs;
 
+    @Autowired
+    private ObjectsListService objectsListService;
     @Autowired
     private SourceCodeService sourceCodeService;
     @Autowired
@@ -236,6 +230,44 @@ public class DependencyController {
 
 
     }
+
+
+
+
+
+    @Operation(summary = "传入node,返回objectlist.cfg文件")
+    @CrossOrigin(origins = "*")//允许跨域
+    @PostMapping(value = "/getObjectsList")
+    public ResponseEntity<byte[]> getObjectsList(
+            @Parameter(description = "顶层节点")
+            @RequestBody Node node) {
+
+        bfs.init();
+        bfs.setDataSource(node.dataSource);
+        bfs.setStartNode(node);
+        bfs.setDisplaySourceCode(false);
+        bfs.Traverse();
+        List<Node> nodes = bfs.getStack();
+
+        // 动态生成txt文件内容
+        String fileContent =  objectsListService.getObjectList(nodes );
+
+        // 将文件内容转换为字节数组
+        byte[] fileBytes = fileContent.getBytes(StandardCharsets.UTF_8);
+
+        // 设置下载的文件名
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=objectslist.cfg");
+
+        // 返回文件下载响应
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(fileBytes);
+
+    }
+
 
     @Operation(summary = "传入node,返回结构化查询树")
     @CrossOrigin(origins = "*")//允许跨域
